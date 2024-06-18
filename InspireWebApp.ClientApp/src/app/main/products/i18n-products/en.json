@@ -1,0 +1,23 @@
+{
+  "fields": {
+    "id": "ID",
+    "category": "Category",
+    "name": "Name",
+    "price": "Price",
+    "promotionTypes": "Promotion types",
+    "description": "Description"
+  },
+  "list": {
+    "header": "Products"
+  },
+  "manage": {
+    "header": {
+      "edit": "Edit product",
+      "add": "Add product"
+    }
+  },
+  "view": {
+    "title_suffix": "Product",
+    "header": "Product details"
+  }
+}

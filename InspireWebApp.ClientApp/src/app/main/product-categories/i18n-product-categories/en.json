@@ -1,0 +1,19 @@
+{
+  "fields": {
+    "id": "ID",
+    "name": "Name"
+  },
+  "list": {
+    "header": "Product categories"
+  },
+  "manage": {
+    "header": {
+      "edit": "Edit product category",
+      "add": "Add product category"
+    }
+  },
+  "view": {
+    "title_suffix": "Product category",
+    "header": "Product category details"
+  }
+}

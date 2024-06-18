@@ -1,0 +1,49 @@
+<p-panel header="Add supplier">
+  <form
+    class="p-fluid"
+    [formGroup]="form"
+  >
+    <div class="field">
+      <label>Name</label>
+      <input
+        pInputText
+        [formControl]="form.controls.name"
+      >
+      <app-form-control-errors [control]="form.controls.name" />
+    </div>
+
+    <div class="field">
+      <label>Info</label>
+      <input
+        pInputTextarea
+        [formControl]="form.controls.info"
+      >
+      <app-form-control-errors [control]="form.controls.info" />
+    </div>
+
+    <div class="field">
+      <label>Contract start</label>
+      <p-calendar
+        [formControl]="form.controls.contractStartDate"
+      />
+      <app-form-control-errors [control]="form.controls.contractStartDate" />
+    </div>
+
+    <div class="field">
+      <label>Contract end</label>
+      <p-calendar
+        [formControl]="form.controls.contractEndDate"
+        [showClear]="true"
+      />
+      <app-form-control-errors [control]="form.controls.contractEndDate" />
+    </div>
+
+    <div>
+      <p-button
+        label="Submit"
+        [disabled]="form.invalid"
+        (onClick)="submitForm()"
+      />
+    </div>
+  </form>
+</p-panel>

@@ -1,0 +1,23 @@
+<ng-container *transloco="let t">
+  <p-panel class="no-content-padding" [header]="t('promotionTypes.view.header')">
+    <ng-template pTemplate="icons">
+      <app-panel-header-actions [items]="panelMenu | dynamicMenu"/>
+    </ng-template>
+
+    <app-details-list-entry [label]="t('promotionTypes.fields.id')">
+      {{ item.id | number: '1.0-99' }}
+    </app-details-list-entry>
+
+    <app-details-list-entry [label]="t('promotionTypes.fields.name')">
+      <ng-container *appEmptyReplacer="item.name">
+        {{ item.name }}
+      </ng-container>
+    </app-details-list-entry>
+  </p-panel>
+
+  <app-deletion-confirm-dialog
+      [(isOpen)]="isDeleteDialogOpen"
+      [itemDeletedName]="representingService.getLabel(item).value"
+      (accepted)="delete()" [inProgress]="deleteMonitor.isSubscribed"
+    />
+</ng-container>

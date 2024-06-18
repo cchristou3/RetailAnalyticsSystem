@@ -1,0 +1,23 @@
+<p-panel header="Supplier details">
+  <app-details-list-entry label="ID">
+    {{ item.id }}
+  </app-details-list-entry>
+
+  <app-details-list-entry label="Name">
+    {{ item.name }}
+  </app-details-list-entry>
+
+  <app-details-list-entry label="Info">
+    {{ item.info }}
+  </app-details-list-entry>
+
+  <app-details-list-entry label="Contract start">
+    {{ item.contractStartDate }}
+  </app-details-list-entry>
+
+  <app-details-list-entry label="Contract end">
+    <ng-container *appNullReplacer="item.contractEndDate">
+      {{ item.contractEndDate }}
+    </ng-container>
+  </app-details-list-entry>
+</p-panel>

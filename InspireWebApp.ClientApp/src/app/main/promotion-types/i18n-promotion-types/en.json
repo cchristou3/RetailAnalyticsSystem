@@ -1,0 +1,19 @@
+{
+  "fields": {
+    "id": "ID",
+    "name": "Name"
+  },
+  "list": {
+    "header": "Promotion types"
+  },
+  "manage": {
+    "header": {
+      "edit": "Edit promotion type",
+      "add": "Add promotion type"
+    }
+  },
+  "view": {
+    "title_suffix": "Promotion type",
+    "header": "Promotion type details"
+  }
+}

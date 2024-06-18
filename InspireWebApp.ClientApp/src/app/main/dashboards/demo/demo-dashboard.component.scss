@@ -1,0 +1,22 @@
+﻿.manage-mode-tools {
+  position: fixed;
+
+  top: 200px;
+  right: 0;
+
+  z-index: 10;
+
+  background: var(--surface-ground);
+
+  border: var(--surface-border) solid 2px;
+  border-right: none;
+
+  border-radius: 5px 0 0 5px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 5px;
+  gap: 5px
+}

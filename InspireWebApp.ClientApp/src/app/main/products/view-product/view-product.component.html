@@ -1,0 +1,53 @@
+<ng-container *transloco="let t">
+  <p-panel class="no-content-padding" [header]="t('products.view.header')">
+    <ng-template pTemplate="icons">
+      <app-panel-header-actions [items]="panelMenu | dynamicMenu"/>
+    </ng-template>
+
+    <app-details-list-entry [label]="t('products.fields.id')">
+      {{ item.id | number: '1.0-99' }}
+    </app-details-list-entry>
+
+    <app-details-list-entry [label]="t('products.fields.category')">
+      <a [routerLink]="['../../../product-categories/view', item.category.id]">
+        <app-product-category-representing [productCategory]="item.category" />
+      </a>
+    </app-details-list-entry>
+
+    <app-details-list-entry [label]="t('products.fields.name')">
+      <ng-container *appEmptyReplacer="item.name">
+        {{ item.name }}
+      </ng-container>
+    </app-details-list-entry>
+
+    <app-details-list-entry [label]="t('products.fields.price')">
+      {{ item.price | number: '1.0-99' }}
+    </app-details-list-entry>
+
+    <app-details-list-entry [label]="t('products.fields.description')">
+      <ng-container *appNullReplacer="item.description">
+        <ng-container *appEmptyReplacer="item.description">
+          <app-multi-line-text [text]="item.description"/>
+        </ng-container>
+      </ng-container>
+    </app-details-list-entry>
+
+    <app-details-list-entry [label]="t('products.fields.promotionTypes')">
+      <ng-container *appEmptyReplacer="item.promotionTypes">
+        <app-chips-list
+          [items]="item.promotionTypes"
+          [labelTemplate]="promotionTypeLabel"
+          [routerCommandsProvider]="getPromotionTypeRouterCommands"/>
+        <ng-template #promotionTypeLabel let-promotionType [appWitnessIterable]="item.promotionTypes">
+          <app-promotion-type-representing [promotionType]="promotionType" />
+        </ng-template>
+      </ng-container>
+    </app-details-list-entry>
+  </p-panel>
+
+  <app-deletion-confirm-dialog
+      [(isOpen)]="isDeleteDialogOpen"
+      [itemDeletedName]="representingService.getLabel(item).value"
+      (accepted)="delete()" [inProgress]="deleteMonitor.isSubscribed"
+    />
+</ng-container>

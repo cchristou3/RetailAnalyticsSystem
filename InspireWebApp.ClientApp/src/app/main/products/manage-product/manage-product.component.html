@@ -1,0 +1,83 @@
+<ng-container *transloco="let t" appIdNamespace="products-manage-">
+  <p-panel
+    #managePanel
+    [header]="manageMode == 'Edit' ? t('products.manage.header.edit') : t('products.manage.header.add')"
+  >
+    <ng-template pTemplate="icons">
+      <app-panel-header-actions [items]="panelMenu | dynamicMenu"/>
+    </ng-template>
+
+    <form class="p-fluid"
+          [formGroup]="form" (ngSubmit)="submitForm()"
+          lossMonitor [lossRouteFilter]="activeRoute">
+      <div class="field">
+        <label namespacedFor="category">
+          {{ t('products.fields.category') }}
+          <app-required-field-indicator></app-required-field-indicator>
+        </label>
+        <p-dropdown [inputId]="'category' | namespaceId" formControlName="category"
+                    [options]="(productCategoryOptions$ | async) ?? []"
+                    optionValue="entry" optionLabel="label"
+                    appPlaceholder appFilterPlaceholder
+                    [filter]="true" [autoDisplayFirst]="false" />
+        <app-form-control-errors controlName="category"></app-form-control-errors>
+      </div>
+
+      <div class="field">
+        <label namespacedFor="name">
+          {{ t('products.fields.name') }}
+          <app-required-field-indicator></app-required-field-indicator>
+        </label>
+        <input namespacedId="name" formControlName="name"
+               pInputText type="text">
+        <app-form-control-errors controlName="name"></app-form-control-errors>
+      </div>
+
+      <div class="field">
+        <label namespacedFor="price">
+          {{ t('products.fields.price') }}
+          <app-required-field-indicator></app-required-field-indicator>
+        </label>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon">€</span>
+          <p-inputNumber [inputId]="'price' | namespaceId" formControlName="price"
+                         [minFractionDigits]="2"
+                         [min]="-999999999999.999" [max]="999999999999.999">
+          </p-inputNumber>
+        </div>
+        <app-form-control-errors controlName="price"></app-form-control-errors>
+      </div>
+
+      <div class="field">
+        <label namespacedFor="description">
+          {{ t('products.fields.description') }}
+        </label>
+        <textarea namespacedId="description" formControlName="description"
+                  pInputTextarea class="common-manage-resizability"></textarea>
+        <app-form-control-errors controlName="description"></app-form-control-errors>
+      </div>
+
+      <div class="field">
+        <label>
+          {{ t('products.fields.promotionTypes') }}
+        </label>
+        <p-multiSelect formControlName="promotionTypes"
+                       [options]="(promotionTypeOptions$ | async) ?? []"
+                       optionLabel="label" optionValue="entry"
+                       display="chip" appPlaceholder appFilterPlaceholder />
+        <app-form-control-errors controlName="promotionTypes"></app-form-control-errors>
+      </div>
+
+      <div>
+        <button type="submit" [disabled]="!form.valid"
+                pButton class="p-button-success not-fluid"
+                [label]="manageMode == 'Edit' ? t('buttons.saveChanges') : t('buttons.saveCreate')">
+        </button>
+      </div>
+    </form>
+  </p-panel>
+
+  <p-blockUI [blocked]="formDisabler.monitor.isSubscribed" [target]="managePanel">
+    <p-progressSpinner></p-progressSpinner>
+  </p-blockUI>
+</ng-container>

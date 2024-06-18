@@ -1,0 +1,35 @@
+<ng-container *transloco="let t" appIdNamespace="promotion-types-manage-">
+  <p-panel
+    #managePanel
+    [header]="manageMode == 'Edit' ? t('promotionTypes.manage.header.edit') : t('promotionTypes.manage.header.add')"
+  >
+    <ng-template pTemplate="icons">
+      <app-panel-header-actions [items]="panelMenu | dynamicMenu"/>
+    </ng-template>
+
+    <form class="p-fluid"
+          [formGroup]="form" (ngSubmit)="submitForm()"
+          lossMonitor [lossRouteFilter]="activeRoute">
+      <div class="field">
+        <label namespacedFor="name">
+          {{ t('promotionTypes.fields.name') }}
+          <app-required-field-indicator></app-required-field-indicator>
+        </label>
+        <input namespacedId="name" formControlName="name"
+               pInputText type="text">
+        <app-form-control-errors controlName="name"></app-form-control-errors>
+      </div>
+
+      <div>
+        <button type="submit" [disabled]="!form.valid"
+                pButton class="p-button-success not-fluid"
+                [label]="manageMode == 'Edit' ? t('buttons.saveChanges') : t('buttons.saveCreate')">
+        </button>
+      </div>
+    </form>
+  </p-panel>
+
+  <p-blockUI [blocked]="formDisabler.monitor.isSubscribed" [target]="managePanel">
+    <p-progressSpinner></p-progressSpinner>
+  </p-blockUI>
+</ng-container>
