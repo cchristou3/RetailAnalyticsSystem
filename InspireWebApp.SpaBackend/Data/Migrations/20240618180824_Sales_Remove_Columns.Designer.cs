@@ -4,6 +4,7 @@ using InspireWebApp.SpaBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InspireWebApp.SpaBackend.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240618180824_Sales_Remove_Columns")]
+    partial class SalesRemoveColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,34 +286,6 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Invoices.Invoice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(15, 3)
-                        .HasColumnType("decimal(15,3)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Invoice");
-                });
-
             modelBuilder.Entity("InspireWebApp.SpaBackend.Features.ProductCategories.ProductCategory", b =>
                 {
                     b.Property<int>("Id")
@@ -373,17 +348,12 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("InvoiceId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(70)
                         .HasColumnType("nvarchar(70)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("InvoiceId");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -537,13 +507,6 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.PromotionTypes.PromotionType", b =>
-                {
-                    b.HasOne("InspireWebApp.SpaBackend.Features.Invoices.Invoice", null)
-                        .WithMany("PromotionTypes")
-                        .HasForeignKey("InvoiceId");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.HasOne("InspireWebApp.SpaBackend.Features.Identity.ApplicationUser", null)
@@ -589,11 +552,6 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
             modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Dashboard.ConfigurableDashboard", b =>
                 {
                     b.Navigation("Tiles");
-                });
-
-            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Invoices.Invoice", b =>
-                {
-                    b.Navigation("PromotionTypes");
                 });
 #pragma warning restore 612, 618
         }
