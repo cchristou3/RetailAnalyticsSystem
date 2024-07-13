@@ -24,7 +24,7 @@ public class ConfigurableDashboardTile
 public enum ConfDashboardTileType
 {
     DummyText = 0,
-    PredefinedVisualization = 1,
+    PredefinedVisualization = 1
 }
 
 public class ConfigurableDashboardTileEntityConfiguration : IEntityTypeConfiguration<ConfigurableDashboardTile>

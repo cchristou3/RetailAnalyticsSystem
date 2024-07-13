@@ -16,7 +16,7 @@ public static class Program
         var app = Bootstrapper.BuildApp(args);
 
         await ApplyMigrations(app);
-        
+
         app.Run();
     }
 

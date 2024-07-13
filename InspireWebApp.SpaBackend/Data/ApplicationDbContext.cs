@@ -1,10 +1,15 @@
 ﻿using System;
+using InspireWebApp.SpaBackend.Features.Cities;
+using InspireWebApp.SpaBackend.Features.CustomerCategories;
+using InspireWebApp.SpaBackend.Features.Customers;
 using InspireWebApp.SpaBackend.Features.Dashboard;
+using InspireWebApp.SpaBackend.Features.Employees;
 using InspireWebApp.SpaBackend.Features.Identity;
-using InspireWebApp.SpaBackend.Features.ProductCategories;
+using InspireWebApp.SpaBackend.Features.Invoices;
+using InspireWebApp.SpaBackend.Features.ProductPackageTypes;
 using InspireWebApp.SpaBackend.Features.Products;
-using InspireWebApp.SpaBackend.Features.PromotionTypes;
-using InspireWebApp.SpaBackend.Features.Suppliers;
+using InspireWebApp.SpaBackend.Features.ProductTags;
+using InspireWebApp.SpaBackend.Features.Tags;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,10 +21,24 @@ public class ApplicationDbContext : IdentityUserContext<ApplicationUser, Guid>
     {
     }
 
-    public DbSet<ProductCategory> ProductCategories { get; set; } = null!;
-    public DbSet<PromotionType> PromotionTypes { get; set; } = null!;
+    public DbSet<ProductTag> ProductTags { get; set; } = null!;
+    
+    public DbSet<Tag> Tags { get; set; } = null!;
+    
+    public DbSet<ProductPackageType> ProductPackageTypes { get; set; } = null!;
+
     public DbSet<Product> Products { get; set; } = null!;
-    public DbSet<Supplier> Suppliers { get; set; } = null!;
+
+    public DbSet<Customer> Customers { get; set; } = null!;
+    
+    public DbSet<Employee> Employees { get; set; } = null!;
+
+    public DbSet<Invoice> Invoices { get; set; } = null!;
+
+    public DbSet<City> Cities { get; set; } = null!;
+
+    public DbSet<CustomerCategory> CustomerCategories { get; set; } = null!;
+
 
     public DbSet<ConfigurableDashboard> ConfigurableDashboards { get; set; } = null!;
     public DbSet<ConfigurableDashboardTile> ConfigurableDashboardTiles { get; set; } = null!;

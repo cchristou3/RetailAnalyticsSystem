@@ -15,7 +15,7 @@ public class SalesByYearBoxplotData
     public double Max { get; set; }
 
     public double TotalVolume { get; set; }
-    
+
     public int Count { get; set; }
 }
 

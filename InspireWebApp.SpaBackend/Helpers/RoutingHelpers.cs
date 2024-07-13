@@ -9,16 +9,10 @@ public static class RoutingHelpers
     public static bool IsSpaRequest(this HttpContext context)
     {
         // Do not forward typo-d api requests to the SPA
-        if (context.Request.Path.StartsWithSegments(ApiRoutePrefix))
-        {
-            return false;
-        }
+        if (context.Request.Path.StartsWithSegments(ApiRoutePrefix)) return false;
 
         // If an endpoint has been found in the C# app, the request shouldn't hit the SPA
-        if (context.GetEndpoint() != null)
-        {
-            return false;
-        }
+        if (context.GetEndpoint() != null) return false;
 
         return true;
     }

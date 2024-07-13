@@ -11,11 +11,11 @@ public class ProductsProfile : Profile
         CreateMap<Product, ProductIdentifier>();
 
         CreateMap<ProductsController.CreateModel, Product>(MemberList.Source)
-            .ForMember(entity => entity.PromotionTypes, opts => opts.Ignore()) // AM can't conjure real entities
+            .ForMember(entity => entity.ProductTags, opts => opts.Ignore()) // AM can't conjure real entities
             ;
 
         CreateMap<ProductsController.UpdateModel, Product>(MemberList.Source)
-            .ForMember(entity => entity.PromotionTypes, opts => opts.Ignore()) // AM can't conjure real entities
+            .ForMember(entity => entity.ProductTags, opts => opts.Ignore()) // AM can't conjure real entities
             .ReverseMap()
             ;
 

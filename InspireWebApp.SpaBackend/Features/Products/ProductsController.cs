@@ -6,8 +6,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using InspireWebApp.SpaBackend.Data;
-using InspireWebApp.SpaBackend.Features.ProductCategories;
-using InspireWebApp.SpaBackend.Features.PromotionTypes;
+using InspireWebApp.SpaBackend.Features.ProductTags;
 using InspireWebApp.SpaBackend.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using NJsonSchema.Annotations;
+using NLog;
 
 namespace InspireWebApp.SpaBackend.Features.Products;
 
@@ -26,23 +26,50 @@ public partial class ProductsController : ControllerBase
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
+    protected static ILogger _logger = LogManager.LoadConfiguration("NLog.config").GetCurrentClassLogger();
+
+    #region ListForReference
+
+    [HttpGet("for-reference")]
+    public async Task<IEnumerable<ProductReferenceModel>> ListForReference()
+    {
+        _logger.Info("GET ListForReference");
+            
+        return await _dbContext.Products
+            .ProjectTo<ProductReferenceModel>(_mapper)
+            .ToArrayAsync();
+    }
+
+    #endregion
+
+    #region Delete
+
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var product = await _dbContext.Products
+            .SingleOrDefaultAsync(p => p.Id == id);
+
+        if (product == null) return NotFound();
+
+        _dbContext.Products.Remove(product);
+        await _dbContext.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    #endregion
 
     #region Create
 
     [JsonSchema(Name = "ProductCreateModel")]
     public class CreateModel
     {
-        public required int CategoryId { get; set; }
+        [MaxLength(70)] [MinLength(3)] public required string Name { get; set; }
 
-        [MaxLength(70)]
-        [MinLength(3)]
-        public required string Name { get; set; }
-
-        public required decimal Price { get; set; }
-
-        public required string? Description { get; set; }
-
-        public required IList<PromotionTypeIdentifier> PromotionTypes { get; set; }
+        public required IList<ProductTagIdentifier> ProductTags { get; set; }
     }
 
     [HttpPost]
@@ -50,35 +77,23 @@ public partial class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<int>> Create(CreateModel model)
     {
-        ProductCategory? category = await _dbContext.ProductCategories.FirstOrDefaultAsync(p => p.Id == model.CategoryId);
-        if (category == null)
-        {
-            ModelState.AddModelError<CreateModel>(
-                m => m.CategoryId,
-                "Category not found"
-            );
-        }
-
-        IDictionary<PromotionTypeIdentifier, PromotionType> promotionTypesByIdentifier = await _dbContext.PromotionTypes
+        var promotionTypesByIdentifier = await _dbContext.ProductTags
             .GetForIdentifiers(
-                model.PromotionTypes,
+                model.ProductTags,
                 identifier => p => p.Id == identifier.Id
             );
 
         ControllerHelpers.ValidateManyToMany(
             ModelState, model, promotionTypesByIdentifier,
-            m => m.PromotionTypes, identifier => identifier,
-            i => m => m.PromotionTypes[i]
+            m => m.ProductTags, identifier => identifier,
+            i => m => m.ProductTags[i]
         );
 
-        if (!ModelState.IsValid)
-        {
-            return ValidationProblem();
-        }
+        if (!ModelState.IsValid) return ValidationProblem();
 
-        Product product = _mapper.Map<Product>(model);
+        var product = _mapper.Map<Product>(model);
 
-        product.PromotionTypes = model.PromotionTypes
+        product.ProductTags = model.ProductTags
             .Select(identifier => promotionTypesByIdentifier[identifier])
             .ToHashSet();
 
@@ -106,27 +121,9 @@ public partial class ProductsController : ControllerBase
     {
         public required int Id { get; set; }
 
-        public required ProductCategoryReferenceModel Category { get; set; }
+        [MaxLength(70)] [MinLength(3)] public required string Name { get; set; }
 
-        [MaxLength(70)]
-        [MinLength(3)]
-        public required string Name { get; set; }
-
-        public required decimal Price { get; set; }
-
-        public required IList<PromotionTypeReferenceModel> PromotionTypes { get; set; }
-    }
-
-    #endregion
-
-    #region ListForReference
-
-    [HttpGet("for-reference")]
-    public async Task<IEnumerable<ProductReferenceModel>> ListForReference()
-    {
-        return await _dbContext.Products
-            .ProjectTo<ProductReferenceModel>(_mapper)
-            .ToArrayAsync();
+        public required IList<ProductTagReferenceModel> ProductTags { get; set; }
     }
 
     #endregion
@@ -138,16 +135,13 @@ public partial class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<DetailsModel>> Get(int id)
     {
-        DetailsModel? model = await _dbContext.Products
+        var model = await _dbContext.Products
             .Where(p => p.Id == id)
             .ProjectTo<DetailsModel>(_mapper)
             .AsSplitQuery()
             .SingleOrDefaultAsync();
 
-        if (model == null)
-        {
-            return NotFound();
-        }
+        if (model == null) return NotFound();
 
         return Ok(model);
     }
@@ -157,17 +151,9 @@ public partial class ProductsController : ControllerBase
     {
         public required int Id { get; set; }
 
-        public required ProductCategoryReferenceModel Category { get; set; }
+        [MaxLength(70)] [MinLength(3)] public required string Name { get; set; }
 
-        [MaxLength(70)]
-        [MinLength(3)]
-        public required string Name { get; set; }
-
-        public required decimal Price { get; set; }
-
-        public required string? Description { get; set; }
-
-        public required IList<PromotionTypeReferenceModel> PromotionTypes { get; set; }
+        public required IList<ProductTagReferenceModel> ProductTags { get; set; }
     }
 
     #endregion
@@ -179,16 +165,13 @@ public partial class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UpdateModel>> GetForUpdate(int id)
     {
-        UpdateModel? model = await _dbContext.Products
+        var model = await _dbContext.Products
             .Where(p => p.Id == id)
             .ProjectTo<UpdateModel>(_mapper)
             .AsSplitQuery()
             .SingleOrDefaultAsync();
 
-        if (model == null)
-        {
-            return NotFound();
-        }
+        if (model == null) return NotFound();
 
         return Ok(model);
     }
@@ -196,17 +179,10 @@ public partial class ProductsController : ControllerBase
     [JsonSchema(Name = "ProductUpdateModel")]
     public class UpdateModel
     {
-        public required int CategoryId { get; set; }
 
-        [MaxLength(70)]
-        [MinLength(3)]
-        public required string Name { get; set; }
+        [MaxLength(70)] [MinLength(3)] public required string Name { get; set; }
 
-        public required decimal Price { get; set; }
-
-        public required string? Description { get; set; }
-
-        public required IList<PromotionTypeIdentifier> PromotionTypes { get; set; }
+        public required IList<ProductTagIdentifier> ProductTags { get; set; }
     }
 
     [HttpPatch("{id:int}")]
@@ -216,42 +192,30 @@ public partial class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<UpdateModel>> Update(int id, UpdateModel model)
     {
-        Product? product = await _dbContext.Products
-            .Include(p => p.PromotionTypes)
+        var product = await _dbContext.Products
+            .Include(p => p.ProductTags)
             .AsSplitQuery()
             .SingleOrDefaultAsync(p => p.Id == id);
 
         if (product == null) return NotFound();
 
-        ProductCategory? category = await _dbContext.ProductCategories.FirstOrDefaultAsync(p => p.Id == model.CategoryId);
-        if (category == null)
-        {
-            ModelState.AddModelError<CreateModel>(
-                m => m.CategoryId,
-                "Category not found"
-            );
-        }
-
-        IDictionary<PromotionTypeIdentifier, PromotionType> promotionTypesByIdentifier = await _dbContext.PromotionTypes
+        var promotionTypesByIdentifier = await _dbContext.ProductTags
             .GetForIdentifiers(
-                model.PromotionTypes,
+                model.ProductTags,
                 identifier => p => p.Id == identifier.Id
             );
 
         ControllerHelpers.ValidateManyToMany(
             ModelState, model, promotionTypesByIdentifier,
-            m => m.PromotionTypes, identifier => identifier,
-            i => m => m.PromotionTypes[i]
+            m => m.ProductTags, identifier => identifier,
+            i => m => m.ProductTags[i]
         );
 
-        if (!ModelState.IsValid)
-        {
-            return ValidationProblem();
-        }
+        if (!ModelState.IsValid) return ValidationProblem();
 
         _mapper.Map(model, product);
 
-        product.PromotionTypes = model.PromotionTypes
+        product.ProductTags = model.ProductTags
             .Select(identifier => promotionTypesByIdentifier[identifier])
             .ToHashSet();
 
@@ -265,29 +229,6 @@ public partial class ProductsController : ControllerBase
         }
 
         return Ok(_mapper.Map<UpdateModel>(product));
-    }
-
-    #endregion
-
-    #region Delete
-
-    [HttpDelete("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(int id)
-    {
-        Product? product = await _dbContext.Products
-            .SingleOrDefaultAsync(p => p.Id == id);
-
-        if (product == null)
-        {
-            return NotFound();
-        }
-
-        _dbContext.Products.Remove(product);
-        await _dbContext.SaveChangesAsync();
-
-        return Ok();
     }
 
     #endregion
@@ -309,14 +250,12 @@ public partial class ProductsController : ControllerBase
         Expression<Func<Product, bool>> filter
     )
     {
-        IQueryable<Product> query = _dbContext.Products
+        var query = _dbContext.Products
             .Where(filter);
 
         if (currentId != null)
-        {
             query = query
                 .Where(p => p.Id != currentId);
-        }
 
         return await query.AnyAsync()
             ? Conflict()

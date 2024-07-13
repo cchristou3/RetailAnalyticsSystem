@@ -21,17 +21,14 @@ public static class CollectionHelpers
         Func<TKey, TValue> valueFactory
     )
     {
-        if (!dictionary.ContainsKey(key))
-        {
-            dictionary[key] = valueFactory(key);
-        }
+        if (!dictionary.ContainsKey(key)) dictionary[key] = valueFactory(key);
 
         return dictionary[key];
     }
 
     /// <summary>
-    /// Creates a new dictionary where the keys become values and values become keys (pairwise).
-    /// The original dictionary is not modified.
+    ///     Creates a new dictionary where the keys become values and values become keys (pairwise).
+    ///     The original dictionary is not modified.
     /// </summary>
     /// <exception cref="ArgumentException">The original dictionary had duplicate values</exception>
     public static Dictionary<TOriginalValue, TOriginalKey> Invert<TOriginalKey, TOriginalValue>(

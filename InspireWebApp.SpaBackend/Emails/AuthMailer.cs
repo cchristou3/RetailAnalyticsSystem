@@ -24,7 +24,7 @@ public class AuthMailer : IAuthMailer
     {
         Dictionary<string, string> mapDict = new()
         {
-            ["callbackUrl"] = callbackUrl,
+            ["callbackUrl"] = callbackUrl
         };
 
         return await _emailFactory.Create()
@@ -38,7 +38,7 @@ public class AuthMailer : IAuthMailer
     {
         Dictionary<string, string> mapDict = new()
         {
-            ["callbackUrl"] = callbackUrl,
+            ["callbackUrl"] = callbackUrl
         };
 
         return await _emailFactory.Create()

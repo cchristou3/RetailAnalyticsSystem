@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using InspireWebApp.SpaBackend.Features.PromotionTypes;
+using InspireWebApp.SpaBackend.Features.Customers;
+using InspireWebApp.SpaBackend.Features.Employees;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,10 +12,13 @@ public record InvoiceIdentifier
 {
     public required int Id { get; init; }
 
-    public static implicit operator InvoiceIdentifier(Invoice invoice) => new()
+    public static implicit operator InvoiceIdentifier(Invoice invoice)
     {
-        Id = invoice.Id,
-    };
+        return new InvoiceIdentifier
+        {
+            Id = invoice.Id
+        };
+    }
 }
 
 public class Invoice
@@ -29,25 +34,13 @@ public class Invoice
 
     public int Id { get; set; }
 
-    [MaxLength(70)]
-    [MinLength(3)]
-    public required string Name { get; set; }
+    public required DateTime Date { get; set; }
 
-    public required decimal Price { get; set; }
+    public required Customer Customer { get; set; }
+    public required int CustomerId { get; set; }
 
-    public required string? Description { get; set; }
+    public required Employee Employee { get; set; }
+    public required int EmployeeId { get; set; }
 
-    public ICollection<PromotionType>? PromotionTypes { get; set; }
-}
-
-public class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invoice>
-{
-    public void Configure(EntityTypeBuilder<Invoice> builder)
-    {
-        builder.HasIndex(entity => entity.Name)
-            .IsUnique();
-
-        builder.Property(p => p.Price)
-            .HasPrecision(15, 3);
-    }
+    public ICollection<InvoiceDetail>? InvoiceDetails { get; set; }
 }

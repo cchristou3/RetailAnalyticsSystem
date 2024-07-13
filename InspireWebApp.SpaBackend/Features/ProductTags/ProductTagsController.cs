@@ -14,160 +14,25 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using NJsonSchema.Annotations;
 
-namespace InspireWebApp.SpaBackend.Features.ProductCategories;
+namespace InspireWebApp.SpaBackend.Features.ProductTags;
 
 [ApiController]
-[Route(RoutingHelpers.ApiRoutePrefix + "/product-categories")]
+[Route(RoutingHelpers.ApiRoutePrefix + "/promotion-types")]
 [Authorize]
 [AutoConstructor]
-public partial class ProductCategoriesController : ControllerBase
+public partial class ProductTagsController : ControllerBase
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
 
-    #region Create
-
-    [JsonSchema(Name = "ProductCategoryCreateModel")]
-    public class CreateModel
-    {
-        [MaxLength(70)]
-        [MinLength(3)]
-        public required string Name { get; set; }
-    }
-
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<int>> Create(CreateModel model)
-    {
-        ProductCategory productCategory = _mapper.Map<ProductCategory>(model);
-
-        _dbContext.ProductCategories.Add(productCategory);
-        await _dbContext.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(Get), new { id = productCategory.Id }, productCategory.Id);
-    }
-
-    #endregion
-
-    #region List
-
-    [HttpGet]
-    public async Task<IEnumerable<ListModel>> List()
-    {
-        return await _dbContext.ProductCategories
-            .ProjectTo<ListModel>(_mapper)
-            .ToArrayAsync();
-    }
-
-    [JsonSchema(Name = "ProductCategoriesListModel")]
-    public class ListModel
-    {
-        public required int Id { get; set; }
-
-        [MaxLength(70)]
-        [MinLength(3)]
-        public required string Name { get; set; }
-    }
-
-    #endregion
-
     #region ListForReference
 
     [HttpGet("for-reference")]
-    public async Task<IEnumerable<ProductCategoryReferenceModel>> ListForReference()
+    public async Task<IEnumerable<ProductTagReferenceModel>> ListForReference()
     {
-        return await _dbContext.ProductCategories
-            .ProjectTo<ProductCategoryReferenceModel>(_mapper)
+        return await _dbContext.ProductTags
+            .ProjectTo<ProductTagReferenceModel>(_mapper)
             .ToArrayAsync();
-    }
-
-    #endregion
-
-    #region Get
-
-    [HttpGet("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<DetailsModel>> Get(int id)
-    {
-        DetailsModel? model = await _dbContext.ProductCategories
-            .Where(p => p.Id == id)
-            .ProjectTo<DetailsModel>(_mapper)
-            .SingleOrDefaultAsync();
-
-        if (model == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(model);
-    }
-
-    [JsonSchema(Name = "ProductCategoryDetailsModel")]
-    public class DetailsModel
-    {
-        public required int Id { get; set; }
-
-        [MaxLength(70)]
-        [MinLength(3)]
-        public required string Name { get; set; }
-    }
-
-    #endregion
-
-    #region Update
-
-    [HttpGet("{id:int}/for-update")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UpdateModel>> GetForUpdate(int id)
-    {
-        UpdateModel? model = await _dbContext.ProductCategories
-            .Where(p => p.Id == id)
-            .ProjectTo<UpdateModel>(_mapper)
-            .SingleOrDefaultAsync();
-
-        if (model == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(model);
-    }
-
-    [JsonSchema(Name = "ProductCategoryUpdateModel")]
-    public class UpdateModel
-    {
-        [MaxLength(70)]
-        [MinLength(3)]
-        public required string Name { get; set; }
-    }
-
-    [HttpPatch("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<UpdateModel>> Update(int id, UpdateModel model)
-    {
-        ProductCategory? productCategory = await _dbContext.ProductCategories
-            .SingleOrDefaultAsync(p => p.Id == id);
-
-        if (productCategory == null) return NotFound();
-
-        _mapper.Map(model, productCategory);
-
-        try
-        {
-            await _dbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            return Conflict();
-        }
-
-        return Ok(_mapper.Map<UpdateModel>(productCategory));
     }
 
     #endregion
@@ -179,18 +44,144 @@ public partial class ProductCategoriesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
-        ProductCategory? productCategory = await _dbContext.ProductCategories
+        var promotionType = await _dbContext.ProductTags
             .SingleOrDefaultAsync(p => p.Id == id);
 
-        if (productCategory == null)
-        {
-            return NotFound();
-        }
+        if (promotionType == null) return NotFound();
 
-        _dbContext.ProductCategories.Remove(productCategory);
+        _dbContext.ProductTags.Remove(promotionType);
         await _dbContext.SaveChangesAsync();
 
         return Ok();
+    }
+
+    #endregion
+
+    #region Create
+
+    [JsonSchema(Name = "ProductTagCreateModel")]
+    public class CreateModel
+    {
+        public required int ProductId { get; set; }
+        
+        public required int TagId { get; set; }
+    }
+
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<int>> Create(CreateModel model)
+    {
+        var promotionType = _mapper.Map<ProductTag>(model);
+
+        _dbContext.ProductTags.Add(promotionType);
+        await _dbContext.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(Get), new { id = promotionType.Id }, promotionType.Id);
+    }
+
+    #endregion
+
+    #region List
+
+    [HttpGet]
+    public async Task<IEnumerable<ListModel>> List()
+    {
+        return await _dbContext.ProductTags
+            .ProjectTo<ListModel>(_mapper)
+            .ToArrayAsync();
+    }
+
+    [JsonSchema(Name = "ProductTagsListModel")]
+    public class ListModel
+    {
+        public required int Id { get; set; }
+
+        public required int ProductId { get; set; }
+        
+        public required int TagId { get; set; }
+    }
+
+    #endregion
+
+    #region Get
+
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<DetailsModel>> Get(int id)
+    {
+        var model = await _dbContext.ProductTags
+            .Where(p => p.Id == id)
+            .ProjectTo<DetailsModel>(_mapper)
+            .SingleOrDefaultAsync();
+
+        if (model == null) return NotFound();
+
+        return Ok(model);
+    }
+
+    [JsonSchema(Name = "ProductTagDetailsModel")]
+    public class DetailsModel
+    {
+        public required int Id { get; set; }
+
+        public required int ProductId { get; set; }
+        
+        public required int TagId { get; set; }
+    }
+
+    #endregion
+
+    #region Update
+
+    [HttpGet("{id:int}/for-update")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UpdateModel>> GetForUpdate(int id)
+    {
+        var model = await _dbContext.ProductTags
+            .Where(p => p.Id == id)
+            .ProjectTo<UpdateModel>(_mapper)
+            .SingleOrDefaultAsync();
+
+        if (model == null) return NotFound();
+
+        return Ok(model);
+    }
+
+    [JsonSchema(Name = "ProductTagUpdateModel")]
+    public class UpdateModel
+    {
+        public required int ProductId { get; set; }
+        
+        public required int TagId { get; set; }
+    }
+
+    [HttpPatch("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<UpdateModel>> Update(int id, UpdateModel model)
+    {
+        var promotionType = await _dbContext.ProductTags
+            .SingleOrDefaultAsync(p => p.Id == id);
+
+        if (promotionType == null) return NotFound();
+
+        _mapper.Map(model, promotionType);
+
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return Conflict();
+        }
+
+        return Ok(_mapper.Map<UpdateModel>(promotionType));
     }
 
     #endregion
@@ -204,22 +195,21 @@ public partial class ProductCategoriesController : ControllerBase
         int? currentId, [BindRequired] string name
     )
     {
-        return CheckUniqueCommon(currentId, p => p.Name == name);
+        // TODO-CCH
+        return CheckUniqueCommon(currentId, p => "" == name);
     }
 
     private async Task<ActionResult> CheckUniqueCommon(
         int? currentId,
-        Expression<Func<ProductCategory, bool>> filter
+        Expression<Func<ProductTag, bool>> filter
     )
     {
-        IQueryable<ProductCategory> query = _dbContext.ProductCategories
+        var query = _dbContext.ProductTags
             .Where(filter);
 
         if (currentId != null)
-        {
             query = query
                 .Where(p => p.Id != currentId);
-        }
 
         return await query.AnyAsync()
             ? Conflict()

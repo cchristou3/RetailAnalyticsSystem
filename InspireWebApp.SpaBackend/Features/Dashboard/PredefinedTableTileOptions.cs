@@ -8,5 +8,5 @@ public class PredefinedTableTileOptions
 // Underlying values are persisted to the database, hence must never change
 public enum PredefinedTableType
 {
-    AssociationRules = 0,
+    AssociationRules = 0
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using InspireWebApp.SpaBackend.Features.ProductCategories;
-using InspireWebApp.SpaBackend.Features.PromotionTypes;
+using InspireWebApp.SpaBackend.Features.ProductPackageTypes;
+using InspireWebApp.SpaBackend.Features.ProductTags;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,10 +11,13 @@ public record ProductIdentifier
 {
     public required int Id { get; init; }
 
-    public static implicit operator ProductIdentifier(Product product) => new()
+    public static implicit operator ProductIdentifier(Product product)
     {
-        Id = product.Id,
-    };
+        return new ProductIdentifier
+        {
+            Id = product.Id
+        };
+    }
 }
 
 public class Product
@@ -30,18 +33,14 @@ public class Product
 
     public int Id { get; set; }
 
-    public ProductCategory Category { get; set; } = null!;
-    public int CategoryId { get; set; }
+    public ProductPackageType PackageType { get; set; } = null!;
+    public int PackageTypeId { get; set; }
 
-    [MaxLength(70)]
-    [MinLength(3)]
-    public required string Name { get; set; }
+    [MaxLength(100)] [MinLength(3)] public required string Name { get; set; }
 
-    public required decimal Price { get; set; }
+    public required decimal Weight { get; set; }
 
-    public required string? Description { get; set; }
-
-    public ICollection<PromotionType>? PromotionTypes { get; set; }
+    public ICollection<ProductTag>? ProductTags { get; set; }
 }
 
 public class ProductEntityConfiguration : IEntityTypeConfiguration<Product>
@@ -51,7 +50,7 @@ public class ProductEntityConfiguration : IEntityTypeConfiguration<Product>
         builder.HasIndex(entity => entity.Name)
             .IsUnique();
 
-        builder.Property(p => p.Price)
-            .HasPrecision(15, 3);
+        builder.Property(p => p.Weight)
+            .HasPrecision(9, 2);
     }
 }

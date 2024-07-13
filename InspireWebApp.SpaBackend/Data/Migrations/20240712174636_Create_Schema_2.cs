@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace InspireWebApp.SpaBackend.Data.Migrations
+namespace InspireWebApp.SpaBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class CreateSchema2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,6 +37,19 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Cities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ConfigurableDashboards",
                 columns: table => new
                 {
@@ -50,20 +63,32 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductCategories",
+                name: "CustomerCategories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductCategories", x => x.Id);
+                    table.PrimaryKey("PK_CustomerCategories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PromotionTypes",
+                name: "Employees",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductPackageTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -72,7 +97,7 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PromotionTypes", x => x.Id);
+                    table.PrimaryKey("PK_ProductPackageTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,29 +109,30 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                     DAY = table.Column<int>(type: "int", nullable: false),
                     QUARTER = table.Column<int>(type: "int", nullable: false),
                     CATEGORYID = table.Column<int>(name: "CATEGORY_ID", type: "int", nullable: false),
-                    CATEGORYNAME = table.Column<string>(name: "CATEGORY_NAME", type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    BRAND = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    CATEGORYNAME = table.Column<string>(name: "CATEGORY_NAME", type: "nvarchar(150)", maxLength: 150, nullable: true),
                     PRODUCTID = table.Column<int>(name: "PRODUCT_ID", type: "int", nullable: false),
-                    PRODUCTNAME = table.Column<string>(name: "PRODUCT_NAME", type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    PROMOTION = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    PACKTYPE = table.Column<string>(name: "PACK_TYPE", type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    DIET = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    OUTLETID = table.Column<int>(name: "OUTLET_ID", type: "int", nullable: false),
-                    OUTLETNAME = table.Column<string>(name: "OUTLET_NAME", type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    OUTLETTYPEID = table.Column<int>(name: "OUTLET_TYPE_ID", type: "int", nullable: false),
-                    OUTLETTYPENAME = table.Column<string>(name: "OUTLET_TYPE_NAME", type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    AREAID = table.Column<int>(name: "AREA_ID", type: "int", nullable: false),
-                    URBANRURAL = table.Column<string>(name: "URBAN_RURAL", type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    PAREAID = table.Column<int>(name: "PAREA_ID", type: "int", nullable: false),
-                    AREANAME = table.Column<string>(name: "AREA_NAME", type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    MSIZE = table.Column<double>(name: "M_SIZE", type: "float", nullable: false),
+                    PRODUCTNAME = table.Column<string>(name: "PRODUCT_NAME", type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    MSIZE = table.Column<double>(name: "M_SIZE", type: "float", nullable: true),
                     MPRICE = table.Column<double>(name: "M_PRICE", type: "float", nullable: true),
-                    MQUANTITY = table.Column<double>(name: "M_QUANTITY", type: "float", nullable: false),
+                    MQUANTITY = table.Column<double>(name: "M_QUANTITY", type: "float", nullable: true),
                     MSALESVALUE = table.Column<double>(name: "M_SALES_VALUE", type: "float", nullable: true),
-                    MSALESVOLUME = table.Column<double>(name: "M_SALES_VOLUME", type: "float", nullable: false)
+                    MSALESVOLUME = table.Column<double>(name: "M_SALES_VOLUME", type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -196,47 +222,129 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "Customers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(15,3)", precision: 15, scale: 3, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CityId = table.Column<int>(type: "int", nullable: false),
+                    CustomerCategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.PrimaryKey("PK_Customers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_ProductCategories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "ProductCategories",
+                        name: "FK_Customers_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Customers_CustomerCategories_CustomerCategoryId",
+                        column: x => x.CustomerCategoryId,
+                        principalTable: "CustomerCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductPromotionType",
+                name: "Products",
                 columns: table => new
                 {
-                    ProductsId = table.Column<int>(type: "int", nullable: false),
-                    PromotionTypesId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PackageTypeId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Weight = table.Column<decimal>(type: "decimal(9,2)", precision: 9, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductPromotionType", x => new { x.ProductsId, x.PromotionTypesId });
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductPromotionType_Products_ProductsId",
-                        column: x => x.ProductsId,
+                        name: "FK_Products_ProductPackageTypes_PackageTypeId",
+                        column: x => x.PackageTypeId,
+                        principalTable: "ProductPackageTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Invoices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invoices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Invoices_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Invoices_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductTags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    TagId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductTags", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductTags_Products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductPromotionType_PromotionTypes_PromotionTypesId",
-                        column: x => x.PromotionTypesId,
-                        principalTable: "PromotionTypes",
+                        name: "FK_ProductTags_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvoiceDetail",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InvoiceId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(9,2)", precision: 9, scale: 2, nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvoiceDetail", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InvoiceDetail_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InvoiceDetail_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -269,20 +377,40 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                 column: "ConfigurableDashboardId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductCategories_Name",
-                table: "ProductCategories",
+                name: "IX_Customers_CityId",
+                table: "Customers",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_CustomerCategoryId",
+                table: "Customers",
+                column: "CustomerCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceDetail_InvoiceId",
+                table: "InvoiceDetail",
+                column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceDetail_ProductId",
+                table: "InvoiceDetail",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoices_CustomerId",
+                table: "Invoices",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoices_EmployeeId",
+                table: "Invoices",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductPackageTypes_Name",
+                table: "ProductPackageTypes",
                 column: "Name",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductPromotionType_PromotionTypesId",
-                table: "ProductPromotionType",
-                column: "PromotionTypesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_CategoryId",
-                table: "Products",
-                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_Name",
@@ -291,8 +419,24 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PromotionTypes_Name",
-                table: "PromotionTypes",
+                name: "IX_Products_PackageTypeId",
+                table: "Products",
+                column: "PackageTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductTags_ProductId",
+                table: "ProductTags",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductTags_TagId_ProductId",
+                table: "ProductTags",
+                columns: new[] { "TagId", "ProductId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_Name",
+                table: "Tags",
                 column: "Name",
                 unique: true);
         }
@@ -313,7 +457,10 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                 name: "ConfigurableDashboardTiles");
 
             migrationBuilder.DropTable(
-                name: "ProductPromotionType");
+                name: "InvoiceDetail");
+
+            migrationBuilder.DropTable(
+                name: "ProductTags");
 
             migrationBuilder.DropTable(
                 name: "Sales");
@@ -325,13 +472,28 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                 name: "ConfigurableDashboards");
 
             migrationBuilder.DropTable(
+                name: "Invoices");
+
+            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "PromotionTypes");
+                name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "ProductCategories");
+                name: "Customers");
+
+            migrationBuilder.DropTable(
+                name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "ProductPackageTypes");
+
+            migrationBuilder.DropTable(
+                name: "Cities");
+
+            migrationBuilder.DropTable(
+                name: "CustomerCategories");
         }
     }
 }

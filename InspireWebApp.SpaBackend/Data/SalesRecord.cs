@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InspireWebApp.SpaBackend.Data;
@@ -12,10 +11,10 @@ public class SalesRecord
     public int Quarter { get; set; }
 
     public int CategoryId { get; set; }
-    public string? CategoryName { get; set; } = null!;
+    public string? CategoryName { get; set; }
 
     public int ProductId { get; set; }
-    public string? ProductName { get; set; } = null!;
+    public string? ProductName { get; set; }
 
     public double? Size { get; set; }
     public double? Price { get; set; }
@@ -45,7 +44,7 @@ internal class SalesRecordEntityTypeConfiguration : IEntityTypeConfiguration<Sal
         builder.Property(r => r.SalesValue).HasColumnName("M_SALES_VALUE");
         builder.Property(r => r.SalesVolume).HasColumnName("M_SALES_VOLUME");
 
-        foreach (IMutableProperty property in builder.Metadata.GetProperties())
+        foreach (var property in builder.Metadata.GetProperties())
         {
             if (property.ClrType != typeof(string)) continue;
 

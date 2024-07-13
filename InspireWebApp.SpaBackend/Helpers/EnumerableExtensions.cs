@@ -11,7 +11,7 @@ public static class EnumerableExtensions
         HashSet<T> seenItems = new(comparer);
         HashSet<T> reportedItems = new(comparer);
 
-        foreach (T item in source)
+        foreach (var item in source)
         {
             // If we added the item, then it's the first time we saw it
             if (seenItems.Add(item)) continue;
@@ -36,17 +36,16 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<T> InsertBetween<T>(this IEnumerable<T> source, T betweenValue)
-        => InsertBetween(source, () => betweenValue);
+    {
+        return InsertBetween(source, () => betweenValue);
+    }
 
     public static IEnumerable<T> InsertBetween<T>(this IEnumerable<T> source, Func<T> betweenValueFactory)
     {
-        bool firstItem = true;
-        foreach (T item in source)
+        var firstItem = true;
+        foreach (var item in source)
         {
-            if (!firstItem)
-            {
-                yield return betweenValueFactory();
-            }
+            if (!firstItem) yield return betweenValueFactory();
 
             yield return item;
 

@@ -40,5 +40,5 @@ public enum PredefinedVisualizationType
     PriceHistory = 29,
     FuelBoxplot = 30,
     FuelRadar = 31,
-    FuelPie = 32,
+    FuelPie = 32
 }

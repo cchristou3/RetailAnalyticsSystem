@@ -99,6 +99,31 @@
           "Microsoft.EntityFrameworkCore.Design": "7.0.0"
         }
       },
+      "NLog": {
+        "type": "Direct",
+        "requested": "[4.7.11, )",
+        "resolved": "4.7.11",
+        "contentHash": "A7EpoOjWesV5BPx1cOiBndazZq1VGdagIs6oK8ttcRDl5adCMtHiTqnsD5yYaOrMxOQeCjHBf/w3nKzCmhGbgw=="
+      },
+      "NLog.Config": {
+        "type": "Direct",
+        "requested": "[4.7.11, )",
+        "resolved": "4.7.11",
+        "contentHash": "p9N8dsMVdyXNN+KU2BsBFZ1aR+usL8JWPKe1YuXlKjPEQsltYO43tajlkX2Kilai+PAE1zw9UC8AaBq5r78x3A==",
+        "dependencies": {
+          "NLog": "4.7.11",
+          "NLog.Schema": "4.7.11"
+        }
+      },
+      "NLog.Web.AspNetCore": {
+        "type": "Direct",
+        "requested": "[4.14.0, )",
+        "resolved": "4.14.0",
+        "contentHash": "5fTviEu/f+mIxucGHmcx1q/mtJGo8EZbxACD57H4iJPZbLaD0LsLxMB2xDCxDO9uexlnfMMDoryq1nFdrl/C6A==",
+        "dependencies": {
+          "NLog.Extensions.Logging": "1.7.4"
+        }
+      },
       "NodaTime": {
         "type": "Direct",
         "requested": "[3.1.6, )",
@@ -600,6 +625,21 @@
           "NJsonSchema": "10.8.0",
           "YamlDotNet": "11.2.1"
         }
+      },
+      "NLog.Extensions.Logging": {
+        "type": "Transitive",
+        "resolved": "1.7.4",
+        "contentHash": "/dMxI/lBPNhKe9uONCQaZ3JYSHJh9/yez4Uqc6yIo2hIGaoi8sbQg7WQqW5/1WAIquhrG/SeCEZUTGMiRSQAHw==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "5.0.0",
+          "Microsoft.Extensions.Logging": "5.0.0",
+          "NLog": "4.7.11"
+        }
+      },
+      "NLog.Schema": {
+        "type": "Transitive",
+        "resolved": "4.7.11",
+        "contentHash": "9mmj/hApaSmX9jP2PxLyqywesdEI1nIT2TVWgsdoqb1yIpxvUM+1b6aMD2zJkpGN8y71jmVO2d/FKTwQXIfpSw=="
       },
       "NSwag.Annotations": {
         "type": "Transitive",

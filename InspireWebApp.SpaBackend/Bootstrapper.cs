@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 
@@ -27,18 +28,16 @@ public static class Bootstrapper
 {
     public static WebApplication BuildApp(string[] args)
     {
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
         ConfigureServices(builder);
 
-        WebApplication app = builder.Build();
+        var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
-        {
             app.Services.GetRequiredService<IMapper>()
                 .ConfigurationProvider
                 .AssertConfigurationIsValid();
-        }
 
         ConfigurePipeline(app);
 
@@ -47,16 +46,15 @@ public static class Bootstrapper
 
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
-        IServiceCollection services = builder.Services;
+        var services = builder.Services;
+        
+        builder.Logging.AddConsole();
 
         services.AddDbContext<ApplicationDbContext>(contextBuilder =>
         {
             contextBuilder.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection"),
-                sqlServerBuilder =>
-                {
-                    sqlServerBuilder.UseNodaTime();
-                }
+                sqlServerBuilder => { sqlServerBuilder.UseNodaTime(); }
             );
         });
 
@@ -115,16 +113,10 @@ public static class Bootstrapper
 
         services.AddScoped<SignInManager<ApplicationUser>, ApplicationSignInManager>();
 
-        if (builder.Environment.IsDevelopment())
-        {
-            services.AddDatabaseDeveloperPageExceptionFilter();
-        }
+        if (builder.Environment.IsDevelopment()) services.AddDatabaseDeveloperPageExceptionFilter();
 
         services.AddAutoMapper(
-            config =>
-            {
-                config.AddCollectionMappers();
-            },
+            config => { config.AddCollectionMappers(); },
             typeof(Bootstrapper).Assembly
         );
 
@@ -143,10 +135,7 @@ public static class Bootstrapper
         }
 
         // In production, the Angular files will be served from this directory
-        services.AddSpaStaticFiles(configuration =>
-        {
-            configuration.RootPath = "ClientAppDist";
-        });
+        services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientAppDist"; });
 
         ConfigureEmailServices(services, builder.Configuration);
     }
@@ -174,7 +163,6 @@ public static class Bootstrapper
             // a singleton (which our mailers are, since they handle their own concurrency)
 
             if (emailConf.SmtpLogin != null && emailConf.SmtpPassword != null)
-            {
                 services.AddTransient<ISender>(x => new MailKitSender(new SmtpClientOptions
                 {
                     Server = emailConf.SmtpServerHost,
@@ -183,23 +171,19 @@ public static class Bootstrapper
                     User = emailConf.SmtpLogin,
                     Password = emailConf.SmtpPassword,
 
-                    RequiresAuthentication = true,
+                    RequiresAuthentication = true
                 }));
-            }
             else
-            {
                 /*builder.AddMailKitSender(new SmtpClientOptions
                 {
                     Server = emailConf.SmtpServerHost,
                     Port = emailConf.SmtpServerPort.Value,
                 });*/
-
                 services.AddTransient<ISender>(x => new MailKitSender(new SmtpClientOptions
                 {
                     Server = emailConf.SmtpServerHost,
-                    Port = emailConf.SmtpServerPort.Value,
+                    Port = emailConf.SmtpServerPort.Value
                 }));
-            }
         }
     }
 
@@ -216,10 +200,7 @@ public static class Bootstrapper
         // Note: the position of this middleware is important.
         // 1) We want to avoid the auth/controllers pipeline when in the end we will just serve a static file
         // 2) UseSpa() causes a rewrite of the request to the index.html, which breaks serving of static assets
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseSpaStaticFiles();
-        }
+        if (!app.Environment.IsDevelopment()) app.UseSpaStaticFiles();
 
         app.UseAuthentication();
         app.UseAuthorization();

@@ -14,5 +14,5 @@ public enum DemoChartType
     Line,
     Partition,
     Pie,
-    Sankey,
+    Sankey
 }

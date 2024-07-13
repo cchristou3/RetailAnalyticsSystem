@@ -8,43 +8,46 @@
 
         <ClientAppProjectRoot>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '..', 'InspireWebApp.ClientApp').Replace('\','\\'))</ClientAppProjectRoot>
         <UserSecretsId>6f177b8b-1749-4a87-8ca5-d71ffdead98e</UserSecretsId>
-  </PropertyGroup>
+    </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="AutoConstructor" Version="3.2.5">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="AutoMapper" Version="11.0.1" />
-        <PackageReference Include="AutoMapper.Collection" Version="8.0.0" />
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-        <PackageReference Include="FluentEmail.MailKit" Version="3.0.2" />
-        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
+        <PackageReference Include="AutoMapper" Version="11.0.1"/>
+        <PackageReference Include="AutoMapper.Collection" Version="8.0.0"/>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0"/>
+        <PackageReference Include="FluentEmail.MailKit" Version="3.0.2"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NodaTime" Version="3.1.6" />
-        <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
-        <PackageReference Include="NSwag.AspNetCore" Version="13.18.0" />
-        <PackageReference Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="7.0.0" />
+        <PackageReference Include="NodaTime" Version="3.1.6"/>
+        <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0"/>
+        <PackageReference Include="NSwag.AspNetCore" Version="13.18.0"/>
+        <PackageReference Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="7.0.0"/>
+        <PackageReference Include="NLog" Version="4.7.11" />
+        <PackageReference Include="NLog.Config" Version="4.7.11" />
+        <PackageReference Include="NLog.Web.AspNetCore" Version="4.14.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Emails\Templates\**" />
+        <EmbeddedResource Include="Emails\Templates\**"/>
     </ItemGroup>
-    
+
     <!--
         As part of publishing, ensure the JS resources are freshly built in production mode,
         unless we are exclicity told to skip building (docker)
     -->
     <Target Name="BuildClientApp" AfterTargets="ComputeFilesToPublish" Condition="'$(NoBuild)' != 'true'">
-        <Exec WorkingDirectory="$(ClientAppProjectRoot)" Command="npm ci" />
-        <Exec WorkingDirectory="$(ClientAppProjectRoot)" Command="npm run build" />
+        <Exec WorkingDirectory="$(ClientAppProjectRoot)" Command="npm ci"/>
+        <Exec WorkingDirectory="$(ClientAppProjectRoot)" Command="npm run build"/>
     </Target>
 
     <!-- Include the built angular app in the publish output -->
@@ -52,14 +55,14 @@
         <PropertyGroup>
             <PublishClientAppDist>$(PublishDir)\ClientAppDist</PublishClientAppDist>
         </PropertyGroup>
-        
+
         <ItemGroup>
-            <ClientAppDistFiles Include="$(ClientAppProjectRoot)\dist\**" />
-            <ExistingClientAppDistFiles Include="$(PublishClientAppDist)\**" />
+            <ClientAppDistFiles Include="$(ClientAppProjectRoot)\dist\**"/>
+            <ExistingClientAppDistFiles Include="$(PublishClientAppDist)\**"/>
         </ItemGroup>
 
-        <Delete Files="@(ExistingClientAppDistFiles)" />
-        <Copy SourceFiles="@(ClientAppDistFiles)" DestinationFolder="$(PublishClientAppDist)\%(RecursiveDir)" />
+        <Delete Files="@(ExistingClientAppDistFiles)"/>
+        <Copy SourceFiles="@(ClientAppDistFiles)" DestinationFolder="$(PublishClientAppDist)\%(RecursiveDir)"/>
     </Target>
-    
+
 </Project>

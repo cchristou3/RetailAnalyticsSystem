@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NJsonSchema.Annotations;
+using NLog;
 
 namespace InspireWebApp.SpaBackend.Features.Dashboard;
 
@@ -22,15 +23,39 @@ public partial class ConfigurableDashboardController : ControllerBase
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
+    protected static ILogger _logger = LogManager.LoadConfiguration("NLog.config").GetCurrentClassLogger();
+
+
+    [JsonSchema("ConfigurableDashboardTileUpdateModel")]
+    public class TileUpdateModel
+    {
+        /// <summary>
+        ///     Null = new tile.
+        /// </summary>
+        public required long? Id { get; init; }
+
+        /// <summary>
+        ///     Must be set when (and only when) Id is null.
+        ///     Has no meaning outside of the API call which created the tile on the server.
+        /// </summary>
+        public required string? TempId { get; init; }
+
+        public required int X { get; init; }
+        public required int Y { get; init; }
+        public required int Width { get; init; }
+        public required int Height { get; init; }
+
+        public required ConfDashboardTileType Type { get; init; }
+
+        public required PredefinedVisualizationTileOptions? PredefinedVisualizationOptions { get; init; }
+    }
 
     #region Create
 
     [JsonSchema(Name = "ConfigurableDashboardCreateModel")]
     public class CreateModel
     {
-        [MinLength(3)]
-        [MaxLength(70)]
-        public required string Name { get; set; }
+        [MinLength(3)] [MaxLength(70)] public required string Name { get; set; }
     }
 
     [HttpPost]
@@ -38,8 +63,8 @@ public partial class ConfigurableDashboardController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<int>> Create(CreateModel model)
     {
-        Console.WriteLine("POST ConfigurableDashboard.Create");
-        ConfigurableDashboard dashboard = _mapper.Map<ConfigurableDashboard>(model);
+        _logger.Info("POST ConfigurableDashboard.Create");
+        var dashboard = _mapper.Map<ConfigurableDashboard>(model);
 
         _dbContext.ConfigurableDashboards.Add(dashboard);
         await _dbContext.SaveChangesAsync();
@@ -54,7 +79,7 @@ public partial class ConfigurableDashboardController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<ListModel>> List()
     {
-        Console.WriteLine("GET ConfigurableDashboard.List");
+        _logger.Info("GET ConfigurableDashboard.List");
         return await _dbContext.ConfigurableDashboards
             .ProjectTo<ListModel>(_mapper)
             .ToArrayAsync();
@@ -65,8 +90,7 @@ public partial class ConfigurableDashboardController : ControllerBase
     {
         public required int Id { get; set; }
 
-        [MaxLength(70)]
-        public required string Name { get; set; }
+        [MaxLength(70)] public required string Name { get; set; }
     }
 
     #endregion
@@ -78,17 +102,14 @@ public partial class ConfigurableDashboardController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<DetailsModel>> Get(int id)
     {
-        Console.WriteLine("GET ConfigurableDashboard.Get");
-        DetailsModel? model = await _dbContext.ConfigurableDashboards
+        _logger.Info("GET ConfigurableDashboard.Get");
+        var model = await _dbContext.ConfigurableDashboards
             .Where(a => a.Id == id)
             .ProjectTo<DetailsModel>(_mapper)
             .AsNoTrackingWithIdentityResolution()
             .SingleOrDefaultAsync();
 
-        if (model == null)
-        {
-            return NotFound();
-        }
+        if (model == null) return NotFound();
 
         return Ok(model);
     }
@@ -98,8 +119,7 @@ public partial class ConfigurableDashboardController : ControllerBase
     {
         public required int Id { get; set; }
 
-        [MaxLength(70)]
-        public required string Name { get; set; }
+        [MaxLength(70)] public required string Name { get; set; }
 
         public required IList<TileDetailsModel> Tiles { get; set; }
     }
@@ -132,10 +152,13 @@ public partial class ConfigurableDashboardController : ControllerBase
         int id, IList<TileUpdateModel> newTiles
     )
     {
-        Console.WriteLine("PATCH ConfigurableDashboard.UpdateDashboardTiles");
+        _logger.Info("PATCH ConfigurableDashboard.UpdateDashboardTiles");
+
         // Cannot just use (Id, TempId) as TempId should be ignored when Id is set
         static (bool, long?, string?) GetIdentifierForValidation(TileUpdateModel tile)
-            => tile.Id is not null ? (true, tile.Id, null) : (false, null, tile.TempId);
+        {
+            return tile.Id is not null ? (true, tile.Id, null) : (false, null, tile.TempId);
+        }
 
         ControllerHelpers.ValidateNoDuplicate(
             ModelState, newTiles,
@@ -144,20 +167,14 @@ public partial class ConfigurableDashboardController : ControllerBase
             i => m => m[i]
         );
 
-        if (!ModelState.IsValid)
-        {
-            return ValidationProblem();
-        }
+        if (!ModelState.IsValid) return ValidationProblem();
 
-        ConfigurableDashboard? dashboard = await _dbContext.ConfigurableDashboards
+        var dashboard = await _dbContext.ConfigurableDashboards
             .Include(d => d.Tiles)
             .AsSplitQuery()
             .FirstOrDefaultAsync(d => d.Id == id);
 
-        if (dashboard == null)
-        {
-            return NotFound();
-        }
+        if (dashboard == null) return NotFound();
 
         CreatedTiles createdTiles = new();
 
@@ -168,10 +185,7 @@ public partial class ConfigurableDashboardController : ControllerBase
         await _dbContext.SaveChangesAsync();
 
         Dictionary<string, long> assignedTileIds = new();
-        foreach ((TileUpdateModel dto, ConfigurableDashboardTile entity) in createdTiles)
-        {
-            assignedTileIds[dto.TempId!] = entity.Id;
-        }
+        foreach ((var dto, var entity) in createdTiles) assignedTileIds[dto.TempId!] = entity.Id;
 
         return assignedTileIds;
     }
@@ -184,28 +198,4 @@ public partial class ConfigurableDashboardController : ControllerBase
     }
 
     #endregion
-
-    [JsonSchema("ConfigurableDashboardTileUpdateModel")]
-    public class TileUpdateModel
-    {
-        /// <summary>
-        /// Null = new tile.
-        /// </summary>
-        public required long? Id { get; init; }
-
-        /// <summary>
-        /// Must be set when (and only when) Id is null.
-        /// Has no meaning outside of the API call which created the tile on the server.
-        /// </summary>
-        public required string? TempId { get; init; }
-
-        public required int X { get; init; }
-        public required int Y { get; init; }
-        public required int Width { get; init; }
-        public required int Height { get; init; }
-
-        public required ConfDashboardTileType Type { get; init; }
-
-        public required PredefinedVisualizationTileOptions? PredefinedVisualizationOptions { get; init; }
-    }
 }

@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace InspireWebApp.SpaBackend.Data.Migrations
+namespace InspireWebApp.SpaBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240514122900_Initial")]
-    partial class Initial
+    [Migration("20240712174236_Create_Schema")]
+    partial class CreateSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,28 +66,11 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
 
             modelBuilder.Entity("InspireWebApp.SpaBackend.Data.SalesRecord", b =>
                 {
-                    b.Property<int>("AreaId")
-                        .HasColumnType("int")
-                        .HasColumnName("AREA_ID");
-
-                    b.Property<string>("AreaName")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("AREA_NAME");
-
-                    b.Property<string>("Brand")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("BRAND");
-
                     b.Property<int>("CategoryId")
                         .HasColumnType("int")
                         .HasColumnName("CATEGORY_ID");
 
                     b.Property<string>("CategoryName")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)")
                         .HasColumnName("CATEGORY_NAME");
@@ -96,45 +79,9 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("DAY");
 
-                    b.Property<string>("Diet")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("DIET");
-
                     b.Property<int>("Month")
                         .HasColumnType("int")
                         .HasColumnName("MONTH");
-
-                    b.Property<int>("OutletId")
-                        .HasColumnType("int")
-                        .HasColumnName("OUTLET_ID");
-
-                    b.Property<string>("OutletName")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("OUTLET_NAME");
-
-                    b.Property<int>("OutletTypeId")
-                        .HasColumnType("int")
-                        .HasColumnName("OUTLET_TYPE_ID");
-
-                    b.Property<string>("OutletTypeName")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("OUTLET_TYPE_NAME");
-
-                    b.Property<int>("PAreaId")
-                        .HasColumnType("int")
-                        .HasColumnName("PAREA_ID");
-
-                    b.Property<string>("PackType")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("PACK_TYPE");
 
                     b.Property<double?>("Price")
                         .HasColumnType("float")
@@ -145,18 +92,11 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                         .HasColumnName("PRODUCT_ID");
 
                     b.Property<string>("ProductName")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)")
                         .HasColumnName("PRODUCT_NAME");
 
-                    b.Property<string>("Promotion")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("PROMOTION");
-
-                    b.Property<double>("Quantity")
+                    b.Property<double?>("Quantity")
                         .HasColumnType("float")
                         .HasColumnName("M_QUANTITY");
 
@@ -168,25 +108,78 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                         .HasColumnType("float")
                         .HasColumnName("M_SALES_VALUE");
 
-                    b.Property<double>("SalesVolume")
+                    b.Property<double?>("SalesVolume")
                         .HasColumnType("float")
                         .HasColumnName("M_SALES_VOLUME");
 
-                    b.Property<double>("Size")
+                    b.Property<double?>("Size")
                         .HasColumnType("float")
                         .HasColumnName("M_SIZE");
-
-                    b.Property<string>("UrbanRural")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("URBAN_RURAL");
 
                     b.Property<int>("Year")
                         .HasColumnType("int")
                         .HasColumnName("YEAR");
 
                     b.ToTable("Sales", (string)null);
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Cities.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.CustomerCategories.CustomerCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CustomerCategories");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Customers.Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerCategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("CustomerCategoryId");
+
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Dashboard.ConfigurableDashboard", b =>
@@ -286,6 +279,19 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Employees.Employee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Employees");
+                });
+
             modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Identity.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -352,7 +358,63 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.ProductCategories.ProductCategory", b =>
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Invoices.Invoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Invoices.InvoiceDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(9, 2)
+                        .HasColumnType("decimal(9,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("InvoiceDetail");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.ProductPackageTypes.ProductPackageType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -370,7 +432,31 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("ProductCategories");
+                    b.ToTable("ProductPackageTypes");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.ProductTags.ProductTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("TagId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("ProductTags");
                 });
 
             modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Products.Product", b =>
@@ -381,32 +467,29 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<decimal>("Price")
-                        .HasPrecision(15, 3)
-                        .HasColumnType("decimal(15,3)");
+                    b.Property<int>("PackageTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Weight")
+                        .HasPrecision(9, 2)
+                        .HasColumnType("decimal(9,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
+                    b.HasIndex("PackageTypeId");
+
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.PromotionTypes.PromotionType", b =>
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Tags.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -424,7 +507,7 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("PromotionTypes");
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -491,19 +574,23 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ProductPromotionType", b =>
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Customers.Customer", b =>
                 {
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
+                    b.HasOne("InspireWebApp.SpaBackend.Features.Cities.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("PromotionTypesId")
-                        .HasColumnType("int");
+                    b.HasOne("InspireWebApp.SpaBackend.Features.CustomerCategories.CustomerCategory", "CustomerCategory")
+                        .WithMany()
+                        .HasForeignKey("CustomerCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasKey("ProductsId", "PromotionTypesId");
+                    b.Navigation("City");
 
-                    b.HasIndex("PromotionTypesId");
-
-                    b.ToTable("ProductPromotionType");
+                    b.Navigation("CustomerCategory");
                 });
 
             modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Dashboard.ConfigurableDashboardTile", b =>
@@ -535,15 +622,72 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                     b.Navigation("PredefinedVisualizationOptions");
                 });
 
-            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Products.Product", b =>
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Invoices.Invoice", b =>
                 {
-                    b.HasOne("InspireWebApp.SpaBackend.Features.ProductCategories.ProductCategory", "Category")
+                    b.HasOne("InspireWebApp.SpaBackend.Features.Customers.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.HasOne("InspireWebApp.SpaBackend.Features.Employees.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Invoices.InvoiceDetail", b =>
+                {
+                    b.HasOne("InspireWebApp.SpaBackend.Features.Invoices.Invoice", "Invoice")
+                        .WithMany("InvoiceDetails")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InspireWebApp.SpaBackend.Features.Products.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.ProductTags.ProductTag", b =>
+                {
+                    b.HasOne("InspireWebApp.SpaBackend.Features.Products.Product", "Product")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InspireWebApp.SpaBackend.Features.Tags.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Products.Product", b =>
+                {
+                    b.HasOne("InspireWebApp.SpaBackend.Features.ProductPackageTypes.ProductPackageType", "PackageType")
+                        .WithMany()
+                        .HasForeignKey("PackageTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PackageType");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -573,24 +717,19 @@ namespace InspireWebApp.SpaBackend.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProductPromotionType", b =>
-                {
-                    b.HasOne("InspireWebApp.SpaBackend.Features.Products.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("InspireWebApp.SpaBackend.Features.PromotionTypes.PromotionType", null)
-                        .WithMany()
-                        .HasForeignKey("PromotionTypesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Dashboard.ConfigurableDashboard", b =>
                 {
                     b.Navigation("Tiles");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Invoices.Invoice", b =>
+                {
+                    b.Navigation("InvoiceDetails");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Products.Product", b =>
+                {
+                    b.Navigation("ProductTags");
                 });
 #pragma warning restore 612, 618
         }

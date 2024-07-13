@@ -11,33 +11,33 @@ namespace InspireWebApp.SpaBackend.Helpers;
 public static class EfCoreHelpers
 {
     /// <summary>
-    /// Fetches the DB-mapped entities that are represented by <paramref name="identifiers"/>.
+    ///     Fetches the DB-mapped entities that are represented by <paramref name="identifiers" />.
     /// </summary>
     /// <param name="entitiesSource">
-    /// A queryable which will be used to fetch the entities from the database.
-    /// Usually this will be a <see cref="DbSet{TEntity}"/> but can also be 
-    /// configured with <c>.Include()</c> or other options if needed.
+    ///     A queryable which will be used to fetch the entities from the database.
+    ///     Usually this will be a <see cref="DbSet{TEntity}" /> but can also be
+    ///     configured with <c>.Include()</c> or other options if needed.
     /// </param>
     /// <param name="identifiers">
-    /// The identifiers for which entities will be fetched.
-    /// This list will automatically be <c>.Distinct()</c>ed.
-    /// Each identifier must correspond to at most 1 entity.
+    ///     The identifiers for which entities will be fetched.
+    ///     This list will automatically be <c>.Distinct()</c>ed.
+    ///     Each identifier must correspond to at most 1 entity.
     /// </param>
     /// <param name="rowPredicateProvider">
-    /// A provider of a DB-translatable filter that will be used to map between
-    /// an identifier and the associated entity. 
+    ///     A provider of a DB-translatable filter that will be used to map between
+    ///     an identifier and the associated entity.
     /// </param>
     /// <typeparam name="TIdentifier">
-    /// The type of the identifiers. This must behave with value semantics as it will be used as
-    /// a dictionary key (and in <c>.Distinct()</c>).
+    ///     The type of the identifiers. This must behave with value semantics as it will be used as
+    ///     a dictionary key (and in <c>.Distinct()</c>).
     /// </typeparam>
     /// <typeparam name="TEntity">Entity type that is mapped to database.</typeparam>
     /// <returns>
-    /// A dictionary of identifiers to entities.
-    /// Identifiers for which no entity was found will not be added to this dictionary.  
+    ///     A dictionary of identifiers to entities.
+    ///     Identifiers for which no entity was found will not be added to this dictionary.
     /// </returns>
     /// <remarks>
-    /// This was created for M2M controller plumbing, but can be used for other purposes as well.
+    ///     This was created for M2M controller plumbing, but can be used for other purposes as well.
     /// </remarks>
     // TODO: better name
     // ==== Performance/optimization considerations ===
@@ -74,28 +74,25 @@ public static class EfCoreHelpers
     {
         Dictionary<TIdentifier, TEntity> result = new();
 
-        foreach (TIdentifier identifier in identifiers.Distinct())
+        foreach (var identifier in identifiers.Distinct())
         {
-            TEntity? entity = await entitiesSource.FirstOrDefaultAsync(rowPredicateProvider(identifier));
+            var entity = await entitiesSource.FirstOrDefaultAsync(rowPredicateProvider(identifier));
 
-            if (entity != null)
-            {
-                result[identifier] = entity;
-            }
+            if (entity != null) result[identifier] = entity;
         }
 
         return result;
     }
 
     /// <summary>
-    /// Marks the entity as keyless and excludes it from migrations 
+    ///     Marks the entity as keyless and excludes it from migrations
     /// </summary>
     public static void QueryResultOnly(this EntityTypeBuilder builder)
     {
         builder.HasNoKey();
 
         // https://github.com/dotnet/EntityFramework.Docs/issues/4144#issuecomment-1318520376
-        string tableName = $"_______NON_EXISTING_TABLE_{builder.Metadata.Name}";
+        var tableName = $"_______NON_EXISTING_TABLE_{builder.Metadata.Name}";
         builder.ToTable(tableName, tableBuilder => tableBuilder.ExcludeFromMigrations());
     }
 }

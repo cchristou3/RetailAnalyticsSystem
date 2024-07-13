@@ -13,18 +13,18 @@ public class ErrorIfAuthenticated : Attribute, IResourceFilter
     {
         if (!context.HttpContext.User.Identity!.IsAuthenticated) return;
 
-        ProblemDetailsFactory problemDetailsFactory = context.HttpContext.RequestServices
+        var problemDetailsFactory = context.HttpContext.RequestServices
             .GetRequiredService<ProblemDetailsFactory>();
 
-        ProblemDetails problemDetails = problemDetailsFactory.CreateProblemDetails(
+        var problemDetails = problemDetailsFactory.CreateProblemDetails(
             context.HttpContext,
-            statusCode: 400,
+            400,
             detail: "This API is only for unauthenticated access"
         );
 
         context.Result = new BadRequestObjectResult(problemDetails)
         {
-            StatusCode = problemDetails.Status,
+            StatusCode = problemDetails.Status
         };
     }
 

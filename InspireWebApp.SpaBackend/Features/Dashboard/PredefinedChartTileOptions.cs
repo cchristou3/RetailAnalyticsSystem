@@ -35,5 +35,5 @@ public enum PredefinedChartType
     BasicPartitionChart = 24,
     RulesSupportConfidence = 25,
     RulesSupportConfidenceLift = 26,
-    RulesMatrix = 27,
+    RulesMatrix = 27
 }

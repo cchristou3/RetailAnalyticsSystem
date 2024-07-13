@@ -9,6 +9,7 @@ using InspireWebApp.SpaBackend.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using NodaTime;
 
 namespace InspireWebApp.SpaBackend.Features.Dashboard;
@@ -20,25 +21,25 @@ namespace InspireWebApp.SpaBackend.Features.Dashboard;
 public partial class DashboardChartsController : ControllerBase
 {
     private readonly ApplicationDbContext _dbContext;
-    
+    protected static ILogger _logger = LogManager.LoadConfiguration("NLog.config").GetCurrentClassLogger();
 
     [HttpGet("sales-volume-by-outlet-type")]
     [ResponseCache(NoStore = true)]
     public async Task<object> GetSalesVolumeByOutletType()
     {
-        Console.WriteLine("GET DashboardCharts.GetSalesVolumeByOutletType");
+        _logger.Info("GET DashboardCharts.GetSalesVolumeByOutletType");
         return DataVisualizationHelpers.WrapDefaultDataset(
             await _dbContext.Sales
                 .GroupBy(
-                    record => record.OutletTypeName,
-                    (outletTypeName, records) => new
+                    record => record.ProductName,
+                    (productName, records) => new
                     {
-                        Outlet = outletTypeName,
-                        Volume = records.Sum(record => record.SalesVolume),
+                        Outlet = productName,
+                        Volume = records.Sum(record => record.SalesVolume)
                     }
                 )
                 // .OrderByDescending(arg => arg.SalesVolume)
-                // .Take(3)
+                .Take(3)
                 .ToArrayAsync()
         );
     }
@@ -47,20 +48,9 @@ public partial class DashboardChartsController : ControllerBase
     [ResponseCache(NoStore = true)]
     public async Task<object> GetSalesByPackTypeArea()
     {
-        Console.WriteLine("GET DashboardCharts.GetSalesByPackTypeArea");
+        _logger.Info("GET DashboardCharts.GetSalesByPackTypeArea");
         return DataVisualizationHelpers.WrapDefaultDataset(
-            await _dbContext.Sales
-                .GroupBy(
-                    record => new { record.PackType, record.AreaName },
-                    (group, records) => new
-                    {
-                        Area = group.AreaName,
-                        group.PackType,
-                        Volume = records.Sum(record => record.SalesVolume),
-                        Value = records.Sum(record => record.SalesValue ?? 0),
-                    }
-                )
-                .ToArrayAsync()
+            new object()
         );
     }
 
@@ -68,7 +58,7 @@ public partial class DashboardChartsController : ControllerBase
     [ResponseCache(NoStore = true)]
     public async Task<object> GetSalesByYear()
     {
-        Console.WriteLine("GET DashboardCharts.GetSalesByYear");
+        _logger.Info("GET DashboardCharts.GetSalesByYear");
         return DataVisualizationHelpers.WrapDefaultDataset(
             await _dbContext.Sales
                 .GroupBy(
@@ -77,7 +67,7 @@ public partial class DashboardChartsController : ControllerBase
                     {
                         year,
                         Volume = records.Sum(record => record.SalesVolume),
-                        Value = records.Sum(record => record.SalesValue ?? 0),
+                        Value = records.Sum(record => record.SalesValue ?? 0)
                     }
                 )
                 .OrderBy(arg => arg.year)
@@ -89,84 +79,84 @@ public partial class DashboardChartsController : ControllerBase
     [ResponseCache(NoStore = true)]
     public async Task<object> GetSalesByYearForBoxplot()
     {
-        Console.WriteLine("GET DashboardCharts.GetSalesByYearForBoxplot");
+        _logger.Info("GET DashboardCharts.GetSalesByYearForBoxplot");
         // Loosely based on
         // https://www.seancarney.ca/2021/01/31/calculating-medians-and-quartiles-across-groups-in-sql/
         // and https://dataschool.com/how-to-teach-people-sql/how-to-find-outliers-with-sql/
         // TODO: some of these inner joins should probably become left
         const string shared = """
-        WITH Quartilized AS (
-            SELECT
-                [YEAR],
-                M_SALES_VALUE,
-                M_SALES_VOLUME, -- Does not participate in quartiles
-                NTILE(4) OVER (PARTITION BY [YEAR] ORDER BY M_SALES_VALUE) AS Quartile
-            FROM Sales
-            WHERE M_SALES_VALUE IS NOT NULL
-        ), Quartilies AS (
-            SELECT
-                [YEAR],
-                MAX(CASE WHEN Quartile = 1 THEN M_SALES_VALUE END) [Q1],
-                MAX(CASE WHEN Quartile = 2 THEN M_SALES_VALUE END) [Median],
-                MAX(CASE WHEN Quartile = 3 THEN M_SALES_VALUE END) [Q3],
-                SUM(M_SALES_VOLUME) [TotalVolume],
-                COUNT(1) AS [Count]
-            FROM Quartilized
-            GROUP BY YEAR
-        ), Thresholds AS (
-            SELECT
-                YEAR,
-                Q1 - (Q3 - Q1) * 1.5 AS Lower,
-                Q3 + (Q3 - Q1) * 1.5 AS Upper
-            FROM Quartilies
-        ), CappedMinMax AS (
-            SELECT 
-                s.YEAR,
-                MIN(s.M_SALES_VALUE) AS [Min],
-                MAX(s.M_SALES_VALUE) AS [Max]
-            FROM Sales s
-                INNER JOIN Thresholds t ON t.YEAR = s.YEAR
-            WHERE
-                M_SALES_VALUE IS NOT NULL AND
-                s.M_SALES_VALUE >= t.Lower AND
-                s.M_SALES_VALUE <= t.Upper
-            GROUP BY s.YEAR
-        )
+                              WITH Quartilized AS (
+                                  SELECT
+                                      [YEAR],
+                                      M_SALES_VALUE,
+                                      M_SALES_VOLUME, -- Does not participate in quartiles
+                                      NTILE(4) OVER (PARTITION BY [YEAR] ORDER BY M_SALES_VALUE) AS Quartile
+                                  FROM Sales
+                                  WHERE M_SALES_VALUE IS NOT NULL
+                              ), Quartilies AS (
+                                  SELECT
+                                      [YEAR],
+                                      MAX(CASE WHEN Quartile = 1 THEN M_SALES_VALUE END) [Q1],
+                                      MAX(CASE WHEN Quartile = 2 THEN M_SALES_VALUE END) [Median],
+                                      MAX(CASE WHEN Quartile = 3 THEN M_SALES_VALUE END) [Q3],
+                                      SUM(M_SALES_VOLUME) [TotalVolume],
+                                      COUNT(1) AS [Count]
+                                  FROM Quartilized
+                                  GROUP BY YEAR
+                              ), Thresholds AS (
+                                  SELECT
+                                      YEAR,
+                                      Q1 - (Q3 - Q1) * 1.5 AS Lower,
+                                      Q3 + (Q3 - Q1) * 1.5 AS Upper
+                                  FROM Quartilies
+                              ), CappedMinMax AS (
+                                  SELECT
+                                      s.YEAR,
+                                      MIN(s.M_SALES_VALUE) AS [Min],
+                                      MAX(s.M_SALES_VALUE) AS [Max]
+                                  FROM Sales s
+                                      INNER JOIN Thresholds t ON t.YEAR = s.YEAR
+                                  WHERE
+                                      M_SALES_VALUE IS NOT NULL AND
+                                      s.M_SALES_VALUE >= t.Lower AND
+                                      s.M_SALES_VALUE <= t.Upper
+                                  GROUP BY s.YEAR
+                              )
 
-        """;
+                              """;
 
-        SalesByYearBoxplotData[] main = await _dbContext.Set<SalesByYearBoxplotData>()
+        var main = await _dbContext.Set<SalesByYearBoxplotData>()
             .FromSqlRaw(shared +
                         """
-                SELECT
-                    qs.[YEAR],
-                    Q1, Median, Q3, [Count],
-                    [TotalVolume],
-                    cmm.Min, cmm.Max
-                FROM Quartilies qs
-                    INNER JOIN Thresholds t ON t.YEAR = qs.YEAR
-                    INNER JOIN CappedMinMax cmm ON cmm.YEAR = qs.YEAR
-                ORDER BY YEAR
-                """
+                        SELECT
+                            qs.[YEAR],
+                            Q1, Median, Q3, [Count],
+                            [TotalVolume],
+                            cmm.Min, cmm.Max
+                        FROM Quartilies qs
+                            INNER JOIN Thresholds t ON t.YEAR = qs.YEAR
+                            INNER JOIN CappedMinMax cmm ON cmm.YEAR = qs.YEAR
+                        ORDER BY YEAR
+                        """
             )
             .ToArrayAsync();
 
-        SalesByYearOutlierData[] outliers = await _dbContext.Set<SalesByYearOutlierData>()
+        var outliers = await _dbContext.Set<SalesByYearOutlierData>()
             .FromSqlRaw(shared +
                         """
-                SELECT DISTINCT s.YEAR, s.M_SALES_VALUE AS [Value]
-                FROM Sales s
-                    INNER JOIN Thresholds t ON t.YEAR = s.YEAR
-                WHERE s.M_SALES_VALUE < t.Lower OR s.M_SALES_VALUE > t.Upper
-                ORDER BY s.YEAR, [Value]
-                """
+                        SELECT DISTINCT s.YEAR, s.M_SALES_VALUE AS [Value]
+                        FROM Sales s
+                            INNER JOIN Thresholds t ON t.YEAR = s.YEAR
+                        WHERE s.M_SALES_VALUE < t.Lower OR s.M_SALES_VALUE > t.Upper
+                        ORDER BY s.YEAR, [Value]
+                        """
             )
             .ToArrayAsync();
 
         return new Dictionary<string, object>
         {
             [DataVisualizationConstants.DefaultDatasetKey] = main,
-            ["outliers"] = outliers,
+            ["outliers"] = outliers
         };
     }
 
@@ -174,7 +164,7 @@ public partial class DashboardChartsController : ControllerBase
     [ResponseCache(NoStore = true)]
     public async Task<object> GetSalesByDate()
     {
-        Console.WriteLine("GET DashboardCharts.GetSalesByDate");
+        _logger.Info("GET DashboardCharts.GetSalesByDate");
         var result = await _dbContext.Sales
             .GroupBy(
                 record => new LocalDate(record.Year, record.Month, record.Day),
@@ -182,7 +172,7 @@ public partial class DashboardChartsController : ControllerBase
                 {
                     date,
                     Volume = records.Sum(record => record.SalesVolume),
-                    Value = records.Sum(record => record.SalesValue ?? 0),
+                    Value = records.Sum(record => record.SalesValue ?? 0)
                 }
             )
             .ToArrayAsync();
@@ -194,19 +184,9 @@ public partial class DashboardChartsController : ControllerBase
     [ResponseCache(NoStore = true)]
     public async Task<object> GetSalesByArea()
     {
-        Console.WriteLine("GET DashboardCharts.GetSalesByArea");
+        _logger.Info("GET DashboardCharts.GetSalesByArea");
         return DataVisualizationHelpers.WrapDefaultDataset(
-            await _dbContext.Sales
-                .GroupBy(
-                    record => record.AreaName,
-                    (area, records) => new
-                    {
-                        area,
-                        Volume = records.Sum(record => record.SalesVolume),
-                        Value = records.Sum(record => record.SalesValue ?? 0),
-                    }
-                )
-                .ToArrayAsync()
+            new object()
         );
     }
 
@@ -216,7 +196,7 @@ public partial class DashboardChartsController : ControllerBase
     {
         return DataVisualizationHelpers.WrapDefaultDataset(new object[]
         {
-            new { Series = "DEFAULT", Actual = 60, Target = 80 },
+            new { Series = "DEFAULT", Actual = 60, Target = 80 }
         });
     }
 
@@ -224,8 +204,8 @@ public partial class DashboardChartsController : ControllerBase
     [ResponseCache(NoStore = true)]
     public async Task<object> GetRulesSupportConfidence()
     {
-        Console.WriteLine("GET DashboardCharts.GetRulesSupportConfidence");
-        AssociationRuleRecord[] result = await _dbContext.MinerAssocRules
+        _logger.Info("GET DashboardCharts.GetRulesSupportConfidence");
+        var result = await _dbContext.MinerAssocRules
             .ToArrayAsync();
 
         return DataVisualizationHelpers.WrapDefaultDataset(result);
@@ -235,7 +215,7 @@ public partial class DashboardChartsController : ControllerBase
     [ResponseCache(NoStore = true)]
     public async Task<object> GetCalendarSalesHierarchical()
     {
-        Console.WriteLine("GET DashboardCharts.GetCalendarSalesHierarchical");
+        _logger.Info("GET DashboardCharts.GetCalendarSalesHierarchical");
         var result = await _dbContext.Sales
             .GroupBy(
                 record => new { record.Year, record.Quarter, record.Month },
@@ -245,20 +225,20 @@ public partial class DashboardChartsController : ControllerBase
                     group.Quarter,
                     group.Month,
                     Volume = records.Sum(record => record.SalesVolume),
-                    Value = records.Sum(record => record.SalesValue ?? 0),
+                    Value = records.Sum(record => record.SalesValue ?? 0)
                 }
             )
             .ToArrayAsync();
 
         // This is not pretty and I'm not proud, but it's probably getting reworked soon anyway
-        Dictionary<string, object>[] result2 = result
+        var result2 = result
             .Select(row => new Dictionary<string, object>
             {
                 ["Year"] = row.Year,
                 ["Quarter"] = row.Quarter,
                 ["Month"] = row.Month,
                 ["Volume"] = row.Volume,
-                ["Value"] = row.Value,
+                ["Value"] = row.Value
             })
             .ToArray();
 
@@ -274,7 +254,7 @@ public partial class DashboardChartsController : ControllerBase
                     ["volume"] = rows.Sum(row => (double)row["Volume"]),
                     ["value"] = rows.Sum(row => (double)row["Value"]),
 
-                    ["children"] = childNodes,
+                    ["children"] = childNodes
                 },
                 true,
                 row => row["Year"],

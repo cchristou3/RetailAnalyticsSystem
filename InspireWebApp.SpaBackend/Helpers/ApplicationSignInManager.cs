@@ -33,7 +33,7 @@ public class ApplicationSignInManager : SignInManager<ApplicationUser>
     public override async Task SignOutAsync()
     {
         await Context.SignOutAsync(IdentityConstants.ApplicationScheme);
-        
+
         // Don't have these schemes currently
         // await Context.SignOutAsync(IdentityConstants.ExternalScheme);
         // await Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);

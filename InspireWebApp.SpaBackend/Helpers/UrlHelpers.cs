@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace InspireWebApp.SpaBackend.Helpers;
 
@@ -7,7 +6,7 @@ public static class UrlHelpers
 {
     public static string RelativeToAbsolute(this IUrlHelper urlHelper, string relative)
     {
-        HttpRequest request = urlHelper.ActionContext.HttpContext.Request;
+        var request = urlHelper.ActionContext.HttpContext.Request;
 
         return string.Concat(
             request.Scheme,

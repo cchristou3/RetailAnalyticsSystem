@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NJsonSchema.Annotations;
+using NLog;
 
 namespace InspireWebApp.SpaBackend.Features.Dashboard;
 
@@ -19,20 +20,21 @@ namespace InspireWebApp.SpaBackend.Features.Dashboard;
 public partial class DashboardTablesController : ControllerBase
 {
     private readonly ApplicationDbContext _dbContext;
+    protected static ILogger _logger = LogManager.LoadConfiguration("NLog.config").GetCurrentClassLogger();
 
     #region AssociationRules
 
     [HttpGet("association-rules")]
     public async Task<IList<AssociationRule>> AssociationRules()
     {
-        Console.WriteLine("GET DashboardTables.AssociationRules");
+        _logger.Info("GET DashboardTables.AssociationRules");
         return await _dbContext.MinerAssocRules
             .Select(record => new AssociationRule
             {
                 Rule = record.Rule,
                 Confidence = record.Confidence,
                 Support = record.Support,
-                Lift = record.Lift,
+                Lift = record.Lift
             })
             .ToArrayAsync();
     }
