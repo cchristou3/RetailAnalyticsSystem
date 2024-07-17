@@ -1,16 +1,20 @@
-# This is a sample Python script.
+from datetime import datetime
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import pandas as pd
+from pandas import DataFrame
 
+from predictive_modeling.association_rule_mining import mine_rules
+from services.description import describe
+from services.exploration import explore
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # TODO: Revisit when doing predictive modeling
+
+    # Load the CSV file
+    file_path: str = 'Sales Data Online Shop.csv'
+    data: DataFrame = pd.read_csv(file_path, low_memory=False)
+
+    # explore(data, ignore_visalizations=False)
+    # describe(data)
+    mine_rules(data)
