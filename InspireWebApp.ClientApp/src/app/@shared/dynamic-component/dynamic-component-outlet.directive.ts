@@ -91,6 +91,8 @@ export class DynamicComponentOutletDirective<
       });
     }
 
+    // console.log(`reCreateComponent: ${this._blueprint.componentType}`)
+
     this._componentRuntime = {
       ref: this._viewContainerRef.createComponent(this._blueprint.componentType, {
         injector: injector,

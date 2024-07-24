@@ -22,43 +22,208 @@ namespace InspireWebApp.SpaBackend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.AssociationRuleRecord", b =>
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.AssociationRule", b =>
                 {
-                    b.Property<double>("Confidence")
-                        .HasColumnType("float")
-                        .HasColumnName("CONF");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Confidence")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
 
                     b.Property<string>("LeftHand")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("_LHAND");
+                        .HasMaxLength(1000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(1000)");
 
-                    b.Property<double>("Lift")
-                        .HasColumnType("float")
-                        .HasColumnName("LIFT");
-
-                    b.Property<int>("Relations")
-                        .HasColumnType("int")
-                        .HasColumnName("SET_SIZE");
+                    b.Property<decimal>("Lift")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
 
                     b.Property<string>("RightHand")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("_RHAND");
+                        .HasMaxLength(1000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(1000)");
 
-                    b.Property<string>("Rule")
+                    b.Property<string>("Segment")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("RULE");
+                        .HasMaxLength(150)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(150)");
 
-                    b.Property<double>("Support")
-                        .HasColumnType("float")
-                        .HasColumnName("SUPPORT");
+                    b.Property<decimal>("Support")
+                        .HasPrecision(9, 5)
+                        .HasColumnType("decimal(9,5)");
 
-                    b.ToTable("MinerAssocRules", null, t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
+                    b.HasKey("Id");
+
+                    b.ToTable("MinerAssocRules");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.CityAnalysis.CustomerDistributionByCityRecord", b =>
+                {
+                    b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfCustomers")
+                        .HasColumnType("int");
+
+                    b.ToTable("CustomerDistributionByCityRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.CityAnalysis.TopSellingCitiesRecord", b =>
+                {
+                    b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("TopSellingCitiesRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.CustomerAnalysis.CustomerDistributionByCategoryRecord", b =>
+                {
+                    b.Property<string>("CustomerCategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfCustomers")
+                        .HasColumnType("int");
+
+                    b.ToTable("CustomerDistributionByCategoryRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.CustomerAnalysis.CustomerDistributionBySegmentRecord", b =>
+                {
+                    b.Property<int>("NumberOfCustomers")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SegmentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("CustomerDistributionBySegmentRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.CustomerAnalysis.SalesByCustomerCategoryRecord", b =>
+                {
+                    b.Property<string>("CustomerCategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("SalesByCustomerCategoryRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.ProductSales.SalesByProductPackTypeRecord", b =>
+                {
+                    b.Property<string>("ProductPackTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("SalesByProductPackTypeRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.ProductSales.SalesByProductTagsRecord", b =>
+                {
+                    b.Property<string>("ProductTagName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("SalesByProductTagsRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.ProductSales.TopProfitableProductsPerPackTypeRecord", b =>
+                {
+                    b.Property<decimal>("Contribution")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductPackType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("TopProfitableProductsPerPackTypeRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.ProductSales.TopProfitableProductsPerTagsRecord", b =>
+                {
+                    b.Property<decimal>("Contribution")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductTag")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("TopProfitableProductsPerTagsRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.ProductSales.TopSellingProductsRecord", b =>
+                {
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("TopSellingProducts");
                 });
 
             modelBuilder.Entity("InspireWebApp.SpaBackend.Data.SalesRecord", b =>
@@ -120,6 +285,94 @@ namespace InspireWebApp.SpaBackend.Migrations
                     b.ToTable("Sales", (string)null);
                 });
 
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.TimelySales.DailySalesRecord", b =>
+                {
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("DailySalesRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.TimelySales.DaySalesRecord", b =>
+                {
+                    b.Property<string>("Day")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DayNo")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("DaySalesRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.TimelySales.HourlySalesRecord", b =>
+                {
+                    b.Property<int>("Hour")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("HourlySalesRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.TimelySales.MonthlySalesRecord", b =>
+                {
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("MonthlySalesRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.TimelySales.QuarterlySalesRecord", b =>
+                {
+                    b.Property<int>("Quarter")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.ToTable("QuarterlySalesRecords");
+                });
+
+            modelBuilder.Entity("InspireWebApp.SpaBackend.Data.TimelySales.YearlySalesRecord", b =>
+                {
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.ToTable("YearlySalesRecords");
+                });
+
             modelBuilder.Entity("InspireWebApp.SpaBackend.Features.Cities.City", b =>
                 {
                     b.Property<int>("Id")
@@ -169,6 +422,17 @@ namespace InspireWebApp.SpaBackend.Migrations
 
                     b.Property<int>("CustomerCategoryId")
                         .HasColumnType("int");
+
+                    b.Property<string>("RfmScore")
+                        .HasMaxLength(3)
+                        .IsUnicode(false)
+                        .HasColumnType("char(3)")
+                        .IsFixedLength();
+
+                    b.Property<string>("Segment")
+                        .HasMaxLength(150)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(150)");
 
                     b.HasKey("Id");
 

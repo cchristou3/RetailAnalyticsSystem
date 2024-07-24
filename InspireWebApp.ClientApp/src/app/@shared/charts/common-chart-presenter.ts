@@ -45,6 +45,7 @@ export class CommonChartPresenterComponent implements OnChanges, AfterViewInit, 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('ngOnChanges: ' + this.hasViewInitted)
     if (!this.hasViewInitted) return;
 
     if (changes.hasOwnProperty('dataDescriptor') || changes.hasOwnProperty('configureFn')) {

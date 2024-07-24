@@ -1,0 +1,35 @@
+<!-- TODO: remove row separator after the final row -->
+<p-table [value]="data"
+         [scrollable]="true" scrollHeight="flex"
+         [tableStyle]="{'min-width': '50rem'}">
+
+  <ng-template pTemplate="header">
+
+    <tr>
+
+      <th pSortableColumn="segment">
+        Segment
+        <p-sortIcon field="segment"></p-sortIcon>
+      </th>
+
+      <th pSortableColumn="description">
+        Description
+        <p-sortIcon field="description"></p-sortIcon>
+      </th>
+
+      <th pSortableColumn="typicalActions">
+        Proposed Actions
+        <p-sortIcon field="typicalActions"></p-sortIcon>
+      </th>
+
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-row [appWitnessIterable]="data">
+    <tr>
+      <td>{{ row.segment }}</td>
+      <td>{{ row.description}}</td>
+      <td [innerHTML]="row.typicalActions"></td>
+    </tr>
+  </ng-template>
+</p-table>

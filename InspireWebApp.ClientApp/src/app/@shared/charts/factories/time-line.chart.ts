@@ -5,8 +5,9 @@ import {getDefaultOrFirstSeries} from "./shared";
 import {DEFAULT_SERIES_VALUE} from "../common-viz-data";
 import {configureCommonXyChart, SimpleXySeriesDataSetter} from "./xy.common";
 import {configureLineSeries} from "./line.chart";
+import {Title} from "../common-types/title";
 
-export type TimeLineChartOptions = {
+export type TimeLineChartOptions = Title & {
   datasetKey?: string;
 
   dateAxisField?: string;

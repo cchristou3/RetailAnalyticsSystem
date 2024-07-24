@@ -1,4 +1,8 @@
 ﻿using System;
+using InspireWebApp.SpaBackend.Data.CityAnalysis;
+using InspireWebApp.SpaBackend.Data.CustomerAnalysis;
+using InspireWebApp.SpaBackend.Data.ProductSales;
+using InspireWebApp.SpaBackend.Data.TimelySales;
 using InspireWebApp.SpaBackend.Features.Cities;
 using InspireWebApp.SpaBackend.Features.CustomerCategories;
 using InspireWebApp.SpaBackend.Features.Customers;
@@ -44,7 +48,30 @@ public class ApplicationDbContext : IdentityUserContext<ApplicationUser, Guid>
     public DbSet<ConfigurableDashboardTile> ConfigurableDashboardTiles { get; set; } = null!;
 
     public DbSet<SalesRecord> Sales { get; set; } = null!;
-    public required DbSet<AssociationRuleRecord> MinerAssocRules { get; set; }
+    public required DbSet<AssociationRule> MinerAssocRules { get; set; }
+    
+    
+    public required DbSet<CustomerDistributionByCityRecord> CustomerDistributionByCityRecords { get; set; }
+    public required DbSet<TopSellingCitiesRecord> TopSellingCitiesRecords { get; set; }
+    public required DbSet<SalesByCustomerCategoryRecord> SalesByCustomerCategoryRecords { get; set; }
+    
+    public required DbSet<CustomerDistributionByCategoryRecord> CustomerDistributionByCategoryRecords { get; set; }
+    public required DbSet<CustomerDistributionBySegmentRecord> CustomerDistributionBySegmentRecords { get; set; }
+    public required DbSet<TopSellingProductsRecord> TopSellingProducts { get; set; }
+    public required DbSet<TopProfitableProductsPerPackTypeRecord> TopProfitableProductsPerPackTypeRecords { get; set; }
+    public required DbSet<TopProfitableProductsPerTagsRecord> TopProfitableProductsPerTagsRecords { get; set; }
+    
+    public required DbSet<SalesByProductTagsRecord> SalesByProductTagsRecords { get; set; }
+    public required DbSet<SalesByProductPackTypeRecord> SalesByProductPackTypeRecords { get; set; }
+    
+    public required DbSet<YearlySalesRecord> YearlySalesRecords { get; set; }
+    
+    public required DbSet<DaySalesRecord> DaySalesRecords { get; set; }
+    public required DbSet<DailySalesRecord> DailySalesRecords { get; set; }
+    public required DbSet<HourlySalesRecord> HourlySalesRecords { get; set; }
+    public required DbSet<MonthlySalesRecord> MonthlySalesRecords { get; set; }
+    
+    public required DbSet<QuarterlySalesRecord> QuarterlySalesRecords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

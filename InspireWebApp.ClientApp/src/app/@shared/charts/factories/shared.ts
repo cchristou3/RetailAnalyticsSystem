@@ -30,7 +30,7 @@ export function getDefaultOrFirstDataset(descriptor: CommonVizDataDescriptor): s
 
 export function getDefaultOrFirstSeries(descriptor: CommonVizDatasetDescriptor): string {
   const series = Object.keys(descriptor.valueFields);
-
+  console.log(`getDefaultOrFirstSeries - series: ${series}`)
   if (series.includes(DEFAULT_SERIES)) {
     return DEFAULT_SERIES;
   }

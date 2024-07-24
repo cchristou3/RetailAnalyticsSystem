@@ -24,9 +24,9 @@
   <ng-template pTemplate="body" let-row [appWitnessIterable]="data">
     <tr>
       <td>{{ row.rule }}</td>
-      <td>{{ row.confidence | number:'1.0-2' }}%</td>
-      <td>{{ row.support | number:'1.0-2' }}%</td>
-      <td>{{ row.lift | number:'1.0-2' }}%</td>
+      <td>{{ row.confidence | number:'1.0-4' }}%</td>
+      <td>{{ row.support | number:'1.0-4' }}%</td>
+      <td>{{ row.lift | number:'1.0-4' }}</td>
     </tr>
   </ng-template>
 </p-table>

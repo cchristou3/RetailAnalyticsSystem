@@ -4,7 +4,11 @@
   PredefinedVisualizationType
 } from "../../../../../@core/app-api";
 import {changeableFromConstValue} from "../../../../../@shared/utils/changeable";
-import {CommonVizDataDescriptor} from "../../../../../@shared/charts/common-viz-data";
+import {
+  CommonVizDataDescriptor,
+  CommonVizDatasetType,
+  DEFAULT_DATASET
+} from "../../../../../@shared/charts/common-viz-data";
 import {DynamicComponentBlueprint} from "../../../../../@shared/dynamic-component/dynamic-component.blueprint";
 import {
   CONFIGURE_FN_INPUT,
@@ -41,237 +45,407 @@ export class PredefinedVisSpecProvider {
   // TODO: better args (+ name?)
   public provide(options: Readonly<IPredefinedVisualizationTileOptions>): TileBodySpec {
     switch (options.type) {
+
+      //* City Analytics *//
+
+      case PredefinedVisualizationType.CustomerDistributionByCity:
+        return this.setupTableTileSpec(
+          () => import('./content/city-analysis/customer-distribution-by-city/customer-distribution-by-city'),
+          () => this.tablesClient.getCustomerDistributionByCity(),
+          PredefinedVisualizationType.BasicPie
+        );
+
+      case PredefinedVisualizationType.TopRevenueGeneratingCities:
+        return this.setupChartTileSpec(
+          () => import('./content/city-analysis/top-revenue-generating-cities/basic-bar'),
+          () => this.chartsService.getCommonVizData('top-revenue-generating-cities'),
+          PredefinedVisualizationType.BasicPie
+        );
+
+      //* Customer Analytics *//
+
+      case PredefinedVisualizationType.CustomerDistributionBySegment:
+        return this.setupChartTileSpec(
+          () => import('./content/customer-analytics/customer-distribution-by-customer-segment/basic-pie'),
+          () => this.chartsService.getCommonVizData('customer-distribution-by-segment'),
+          PredefinedVisualizationType.BasicPie
+        );
+
+      case PredefinedVisualizationType.CustomerDistributionByCategory:
+        return this.setupChartTileSpec(
+          () => import('./content/customer-analytics/customer-distribution-by-customer-category/basic-pie'),
+          () => this.chartsService.getCommonVizData('customer-distribution-by-category'),
+          PredefinedVisualizationType.BasicPie
+        );
+
+      case PredefinedVisualizationType.SalesByCustomerCategory:
+        return this.setupChartTileSpec(
+          () => import('./content/customer-analytics/sales-by-customer-category/basic-pie'),
+          () => this.chartsService.getCommonVizData('sales-by-customer-category'),
+          PredefinedVisualizationType.BasicPie
+        );
+
+      case PredefinedVisualizationType.SegmentDetails:
+        return this.setupTableTileSpec(
+          () => import('./content/customer-analytics/segment-details/segment-details'),
+          () => this.tablesClient.getSegmentDetails(),
+          PredefinedVisualizationType.BasicTimeLine,
+        );
+
+      //** Behavioural Analytics **//
+      case PredefinedVisualizationType.SalesForecasting:
+        return this.setupChartTileSpec(
+          () => import('./content/behavioural-analytics/sales-forecasting/basic-line'),
+          () => this.chartsService.getCommonVizData('sales/forecasting'),
+          PredefinedVisualizationType.BasicLine
+        );
+
+      case PredefinedVisualizationType.SalesByHour:
+        return this.setupChartTileSpec(
+          () => import('./content/behavioural-analytics/sales-by-hour/basic-line'),
+          () => this.chartsService.getCommonVizData('sales-by-hour'),
+          PredefinedVisualizationType.BasicLine
+        );
+
+      case PredefinedVisualizationType.SalesByDay:
+        return this.setupChartTileSpec(
+          () => import('./content/behavioural-analytics/sales-by-day/basic-line'),
+          () => this.chartsService.getCommonVizData('sales-by-day'),
+          PredefinedVisualizationType.BasicTimeLine,
+        );
+
+      case PredefinedVisualizationType.SalesByDate:
+        return this.setupChartTileSpec(
+          () => import('./content/behavioural-analytics/sales-by-date/basic-time-line'),
+          () => this.chartsService.getCommonVizData('sales-by-date'),
+          PredefinedVisualizationType.BasicTimeLine,
+        );
+
+      case PredefinedVisualizationType.SalesByMonth:
+        return this.setupChartTileSpec(
+          () => import('./content/behavioural-analytics/sales-by-month/basic-line'),
+          () => this.chartsService.getCommonVizData('sales-by-month'),
+          PredefinedVisualizationType.BasicLine
+        );
+
+      case PredefinedVisualizationType.SalesByQuarter:
+        return this.setupChartTileSpec(
+          () => import('./content/behavioural-analytics/sales-by-quarter/basic-line'),
+          () => this.chartsService.getCommonVizData('sales-by-quarter'),
+          PredefinedVisualizationType.BasicLine
+        );
+
+      case PredefinedVisualizationType.SalesByYear:
+        return this.setupChartTileSpec(
+          () => import('./content/behavioural-analytics/sales-by-year/basic-line'),
+          () => this.chartsService.getCommonVizData('sales-by-year'),
+          PredefinedVisualizationType.BasicLine
+        );
+
+      //** Product Analytics **//
+
+      case PredefinedVisualizationType.TopRevenueGeneratingProducts:
+        return this.setupChartTileSpec(
+          () => import('./content/product-analytics/top-revenue-generating-products/basic-bar'),
+          () => this.chartsService.getCommonVizData('top-revenue-generating-products'),
+          PredefinedVisualizationType.BasicBar
+        );
+
+      case PredefinedVisualizationType.SalesByProductPackType:
+        return this.setupChartTileSpec(
+          () => import('./content/product-analytics/sales-by-product-pack-type/basic-pie'),
+          () => this.chartsService.getCommonVizData('sales-by-product-pack-type'),
+          PredefinedVisualizationType.BasicPie
+        );
+
+      case PredefinedVisualizationType.TopProfitableProductsPerPackType:
+        return this.setupTableTileSpec(
+          () => import('././content/product-analytics/top-products-per-pack-type/top-products-per-pack-type'),
+          () => this.tablesClient.getTopProfitableProductsByProductPackType(),
+          options.type
+        );
+
+      case PredefinedVisualizationType.SalesByProductTag:
+        return this.setupChartTileSpec(
+          () => import('./content/product-analytics/sales-by-product-tag/basic-pie'),
+          () => this.chartsService.getCommonVizData('sales-by-product-tag'),
+          PredefinedVisualizationType.BasicPie
+        );
+
+      case PredefinedVisualizationType.TopProfitableProductsPerTag:
+        return this.setupTableTileSpec(
+          () => import('././content/product-analytics/top-products-per-tag/top-products-per-tag'),
+          () => this.tablesClient.getTopProfitableProductsByProductTag(),
+          options.type
+        );
+
       case PredefinedVisualizationType.BasicPie:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-pie'),
           () => this.chartsService.getCommonVizData('sales-volume-by-outlet-type'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicDonut:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-donut'),
           () => this.chartsService.getCommonVizData('sales-volume-by-outlet-type'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicBar:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-bar'),
           () => this.chartsService.getCommonVizData('sales-volume-by-outlet-type'),
+          options.type
         );
 
       case PredefinedVisualizationType.HorizontalBar:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/horizontal-bar'),
           () => this.chartsService.getCommonVizData('sales-volume-by-outlet-type'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicHeatMap:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-heat-map'),
           () => this.chartsService.getCommonVizData('sales-by-pack-type-area'),
+          options.type
         );
 
       case PredefinedVisualizationType.SemiPie:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/semi-pie'),
           () => this.chartsService.getCommonVizData('sales-volume-by-outlet-type'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicRadar:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-radar'),
           () => this.chartsService.getCommonVizData('sales-volume-by-outlet-type'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicLine:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-line'),
           () => this.chartsService.getCommonVizData('sales-by-year'),
+          options.type
         );
 
       case PredefinedVisualizationType.DualLine:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/dual-line'),
           () => this.chartsService.getCommonVizData('sales-by-year'),
+          options.type
         );
 
       case PredefinedVisualizationType.NestedDonut:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/nested-donut'),
           () => this.chartsService.getCommonVizData('sales-by-year'),
+          options.type
         );
 
       case PredefinedVisualizationType.MultiBar:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/multi-bar'),
           () => this.chartsService.getCommonVizData('sales-by-year'),
+          options.type
         );
 
       case PredefinedVisualizationType.LayeredBar:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/layered-bar'),
           () => this.chartsService.getCommonVizData('sales-by-year'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicBoxplot:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-boxplot'),
           () => this.chartsService.getCommonVizData('sales-by-year-for-boxplot'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicTimeLine:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-time-line'),
           () => this.chartsService.getCommonVizData('sales-by-date'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicCyprusMap:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-cyprus-map'),
           () => this.chartsService.getCommonVizData('sales-by-district'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicBullet:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-bullet'),
           () => this.chartsService.getCommonVizData('dummy-target-completion'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicPareto:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-pareto'),
           () => this.chartsService.getCommonVizData('sales-volume-by-outlet-type'),
+          options.type
         );
 
       case PredefinedVisualizationType.StackedBar:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/stacked-bar'),
           () => this.chartsService.getCommonVizData('sales-by-year'),
+          options.type
         );
 
       case PredefinedVisualizationType.ComboLineBar:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/combo-line-bar'),
           () => this.chartsService.getCommonVizData('sales-by-year'),
+          options.type
         );
 
       case PredefinedVisualizationType.ComboLineBarRotated:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/combo-line-bar-rotated'),
           () => this.chartsService.getCommonVizData('sales-by-year'),
+          options.type
         );
 
       case PredefinedVisualizationType.HorizontalBoxplot:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/horizontal-boxplot'),
           () => this.chartsService.getCommonVizData('sales-by-year-for-boxplot'),
+          options.type
         );
 
       case PredefinedVisualizationType.ComboLineBox:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/combo-line-box'),
           () => this.chartsService.getCommonVizData('sales-by-year-for-boxplot'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicSunburstChart:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-sunburst-chart'),
           () => this.chartsService.getCommonVizData('calendar-sales-hierarchical'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicTreeMap:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-tree-map'),
           () => this.chartsService.getCommonVizData('calendar-sales-hierarchical'),
+          options.type
         );
 
       case PredefinedVisualizationType.BasicPartitionChart:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/basic-partition-chart'),
           () => this.chartsService.getCommonVizData('calendar-sales-hierarchical'),
+          options.type
         );
 
       case PredefinedVisualizationType.RulesSupportConfidence:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/rules-confidence'),
           () => this.chartsService.getCommonVizData('rules-support-confidence'),
+          options.type
         );
 
       case PredefinedVisualizationType.RulesSupportConfidenceLift:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/rules-confidence-lift'),
           () => this.chartsService.getCommonVizData('rules-support-confidence'),
+          options.type
         );
 
       case PredefinedVisualizationType.RulesMatrix:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/rules-matrix'),
           () => this.chartsService.getCommonVizData('rules-support-confidence'),
+          options.type
         );
 
       case PredefinedVisualizationType.AssociationRules:
-        return setupTableTileSpec(
+        return this.setupTableTileSpec(
           () => import('./content/association-rules'),
           () => this.tablesClient.associationRules(),
+          options.type
         );
 
       case PredefinedVisualizationType.PriceHistory:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/price-history'),
           () => import('./content/price-history').then(m => m.data),
+          options.type
         );
 
       case PredefinedVisualizationType.FuelPie:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/fuel-pie'),
           () => import('./content/fuel-pie').then(m => m.data),
+          options.type
         );
 
       case PredefinedVisualizationType.FuelRadar:
-        return setupChartTileSpec(
+        return this.setupChartTileSpec(
           () => import('./content/fuel-radar'),
           () => import('./content/fuel-radar').then(m => m.data),
+          options.type
         );
     }
 
     throw 'PredefinedVisSpecProvider - unreachable code';
 
-    function setupChartTileSpec(
-      importFactory: () => Promise<CommonChartSource>,
-      dataSource: LoadableValueSource<unknown>,
-    ): TileBodySpec {
-      return {
-        component: prepareCommonChartSource(importFactory),
+  }
 
-        ...setupSharedSpecOptions(dataSource),
-      };
-    }
+  private setupChartTileSpec(
+    importFactory: () => Promise<CommonChartSource>,
+    dataSource: LoadableValueSource<unknown>,
+    type: PredefinedVisualizationType
+  ): TileBodySpec {
+    return {
+      component: prepareCommonChartSource(importFactory),
 
-    function setupTableTileSpec<TContent>(
-      importFactory: () => Promise<SimpleTableSource<TContent>>,
-      dataSource: LoadableValueSource<TContent>,
-    ): TileBodySpec {
-      return {
-        component: prepareSimpleTableSource(importFactory),
+      ...this.setupSharedSpecOptions(dataSource, type),
+    };
+  }
 
-        ...setupSharedSpecOptions(dataSource),
-      };
-    }
+  private setupTableTileSpec<TContent>(
+    importFactory: () => Promise<SimpleTableSource<TContent>>,
+    dataSource: LoadableValueSource<TContent>,
+    type: PredefinedVisualizationType
+  ): TileBodySpec {
+    return {
+      component: prepareSimpleTableSource(importFactory),
 
-    function setupSharedSpecOptions(
-      dataSource: LoadableValueSource<unknown>,
-    ): Pick<TileBodySpec, 'data' | 'manageHeaderDescription'> {
-      return {
-        data: changeableFromConstValue(dataSource),
+      ...this.setupSharedSpecOptions(dataSource, type),
+    };
+  }
 
-        manageHeaderDescription: {
-          componentType: PredefinedVisManageHeaderComponent,
-          initSetInputs: {
-            [CHART_TYPE_INPUT]: options.type,
-          } satisfies PredefinedVisManageHeaderInputs as Partial<TileManageHeaderInputs>,
-        },
-      };
-    }
+  private setupSharedSpecOptions(
+    dataSource: LoadableValueSource<unknown>,
+    type: PredefinedVisualizationType
+  ): Pick<TileBodySpec, 'data' | 'manageHeaderDescription'> {
+    return {
+      data: changeableFromConstValue(dataSource),
+
+      manageHeaderDescription: {
+        componentType: PredefinedVisManageHeaderComponent,
+        initSetInputs: {
+          [CHART_TYPE_INPUT]: type,
+        } satisfies PredefinedVisManageHeaderInputs as Partial<TileManageHeaderInputs>,
+      },
+    };
   }
 }
 

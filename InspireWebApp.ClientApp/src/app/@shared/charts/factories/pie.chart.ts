@@ -8,6 +8,7 @@ import {
   DEFAULT_SERIES_VALUE
 } from "../common-viz-data";
 import {configureTopLabel, getDefaultOrFirstDataset, getDefaultOrFirstSeries, TopLabelOptions} from "./shared";
+import {Title} from "../common-types/title";
 
 export enum PieSeriesLabelsMode {
   Standard,
@@ -15,7 +16,7 @@ export enum PieSeriesLabelsMode {
   Disabled,
 }
 
-export type PieChartOptions = {
+export type PieChartOptions = Title & {
   datasetKey?: string;
 
   categoryField?: string;
@@ -64,8 +65,22 @@ export function configurePieChart(wrapper: ICommonChartWrapper, options: PieChar
 
   const root = wrapper.root;
 
+  if (options.title) {
+    root.container.children.push(am5.Label.new(root, {
+      text: options.title,
+      fontSize: 20,
+      fontWeight: "bold",
+      textAlign: "center",
+      x: am5.p50,
+      centerX: am5.p50,
+      y: am5.p0,
+      centerY: am5.p0
+    }));
+  }
+
   const chart = wrapper.chart = root.container.children.push(am5percent.PieChart.new(root, {
     innerRadius: options.innerRadius,
+    y: options.title ? am5.percent(5) : undefined
   }));
 
   // Chart breaks if these are undefined and set above

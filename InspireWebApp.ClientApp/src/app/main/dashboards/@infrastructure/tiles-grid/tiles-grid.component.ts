@@ -143,6 +143,11 @@ export class TilesGridComponent<TTileModel extends TileModel<any>> implements On
   private _rebuildLayoutFromModels(): void {
     this._fullLayout = this._tileModels
       .map(model => model.layoutItem);
+    console.log('this._fullLayout: ')
+
+    this._fullLayout.forEach(layout => {
+      console.log(JSON.stringify(layout))
+    })
 
     this._rebuildSmallViewportLayout();
   }

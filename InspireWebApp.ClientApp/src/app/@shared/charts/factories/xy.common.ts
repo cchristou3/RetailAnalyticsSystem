@@ -11,13 +11,14 @@ import {
   tryConfigurePreProcessDates
 } from "./shared";
 import {CommonVizDataContainer, CommonVizTabularDatasetDescriptor} from "../common-viz-data";
+import {Title} from "../common-types/title";
 
 // Base axis = axis which separates the data points from each other.
 // Usually dates or categories as the X axis.
 // Setting it to vertical is usually done for a horizontal bar chart.
 // https://www.amcharts.com/docs/v5/charts/xy-chart/series/#Base_axis
 
-export type XyCommonChartOptions = {
+export type XyCommonChartOptions = Title & {
   isBaseAxisVertical?: boolean;
 
   baseAxisDataset?: string;
@@ -31,6 +32,21 @@ export type XyCommonChartOptions = {
 
   label?: TopLabelOptions;
 };
+
+function setXyChartTitle(xyContext: XyCommonChartContext, title: string | undefined) {
+
+  if (!title)
+    return
+
+  xyContext.chart.children.unshift(am5.Label.new(xyContext.wrapper.root, {
+    text: title,
+    fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    x: am5.p50,
+    centerX: am5.p50
+  }));
+}
 
 export function configureCommonXyChart(wrapper: ICommonChartWrapper, options: XyCommonChartOptions): XyCommonChartContext {
   const baseAxisDataset = getDefaultOrFirstDataset(wrapper.dataDescriptor);
@@ -87,8 +103,14 @@ export function configureCommonXyChart(wrapper: ICommonChartWrapper, options: Xy
   cursor.lineY.set('visible', false);
   cursor.lineX.set('visible', false);
 
-  return new XyCommonChartContext(wrapper, isBaseAxisVertical, baseAxisDataset, baseAxisField);
+  const xyContext = new XyCommonChartContext(wrapper, isBaseAxisVertical, baseAxisDataset, baseAxisField);
+
+  setXyChartTitle(xyContext, options.title)
+
+  return xyContext
 }
+
+
 
 // Use configureCommonXyChart() to create this
 export class XyCommonChartContext {

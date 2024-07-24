@@ -1,0 +1,29 @@
+<!-- TODO: remove row separator after the final row -->
+<p-table [value]="data"
+         [scrollable]="true" scrollHeight="flex"
+         [tableStyle]="{'min-width': '50rem'}"
+         sortField="cityName" [sortOrder]="1">
+
+  <ng-template pTemplate="header">
+
+    <tr>
+      <th pSortableColumn="cityName">
+        City Name
+        <p-sortIcon field="cityName"></p-sortIcon>
+      </th>
+
+      <th pSortableColumn="numberOfCustomers">
+        Number of Customers
+        <p-sortIcon field="numberOfCustomers"></p-sortIcon>
+      </th>
+
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-row [appWitnessIterable]="data">
+    <tr>
+      <td>{{ row.cityName }}</td>
+      <td>{{ row.numberOfCustomers }}</td>
+    </tr>
+  </ng-template>
+</p-table>

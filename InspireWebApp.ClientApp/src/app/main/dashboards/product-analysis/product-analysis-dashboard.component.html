@@ -1,0 +1,25 @@
+<p>
+  Manage mode:
+  <p-checkbox [(ngModel)]="manageMode" [binary]="true"/>
+</p>
+
+<div
+  *ngIf="manageMode"
+  class="manage-mode-tools">
+  <button pButton class="p-panel-header-icon p-link p-button-success">
+    <span class="pi pi-plus"></span>
+  </button>
+  <button pButton class="p-panel-header-icon p-link p-button-success">
+    <span class="pi pi-plus"></span>
+  </button>
+  <button pButton class="p-panel-header-icon p-link">
+    <span class="pi pi-save"></span>
+  </button>
+</div>
+
+
+<app-dash-tiles-grid
+  [(tileModels)]="tileModels"
+  (tileModelsChange)="console.log($event)"
+  [presentSpecProvider]="provideTileSpecBound"
+  [isManageModeSelected]="manageMode"/>

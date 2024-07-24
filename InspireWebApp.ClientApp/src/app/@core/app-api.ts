@@ -14,6 +14,10 @@ import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 
 import { Observable, throwError as _observableThrow, of as _observableOf } from 'rxjs';
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import {DashboardTableTopProfitableProductsPerPackType} from "./dashboard/tables/top-products-per-pack-type";
+import {DashboardTableTopProfitableProductsPerTag} from "./dashboard/tables/top-products-per-tag";
+import {DashboardTableCustomerDistributionByCity} from "./dashboard/tables/customer-distribution-by-city";
+import {DashboardTableSegmentDetails} from "./dashboard/tables/segment-details";
 
 export const APP_API_BASE_URL = new InjectionToken<string>('APP_API_BASE_URL');
 
@@ -123,7 +127,7 @@ export class SuppliersClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
                 result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -190,7 +194,7 @@ export class PromotionTypesClient {
             let result201: any = null;
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
                 result201 = resultData201 !== undefined ? resultData201 : <any>null;
-    
+
             return _observableOf(result201);
             }));
         } else if (status === 400) {
@@ -677,7 +681,7 @@ export class ProductsClient {
             let result201: any = null;
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
                 result201 = resultData201 !== undefined ? resultData201 : <any>null;
-    
+
             return _observableOf(result201);
             }));
         } else if (status === 400) {
@@ -1164,7 +1168,7 @@ export class ProductCategoriesClient {
             let result201: any = null;
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
                 result201 = resultData201 !== undefined ? resultData201 : <any>null;
-    
+
             return _observableOf(result201);
             }));
         } else if (status === 400) {
@@ -1977,7 +1981,7 @@ export class AuthClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
                 result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2152,7 +2156,7 @@ export class ConfigurableDashboardClient {
             let result201: any = null;
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
                 result201 = resultData201 !== undefined ? resultData201 : <any>null;
-    
+
             return _observableOf(result201);
             }));
         } else if (status === 400) {
@@ -2857,33 +2861,53 @@ export class DashboardTablesClient {
         this.baseUrl = baseUrl ?? "http://localhost:5002";
     }
 
-    associationRules(): Observable<DashboardTableAssociationRule[]> {
-        let url_ = this.baseUrl + "/_api/dashboard-tables/association-rules";
-        url_ = url_.replace(/[?&]$/, "");
+  call<TResult>(endpoint: string, fromJS: (data: any) => TResult): Observable<TResult[]> {
+    let url_ = this.baseUrl + `/_api/dashboard-tables/${endpoint}`;
+    url_ = url_.replace(/[?&]$/, "");
 
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
+    let options_ : any = {
+      observe: "response",
+      responseType: "blob",
+      headers: new HttpHeaders({
+        "Accept": "application/json"
+      })
+    };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssociationRules(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAssociationRules(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<DashboardTableAssociationRule[]>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<DashboardTableAssociationRule[]>;
-        }));
-    }
+    return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+      return this.processResult(response_, fromJS);
+    })).pipe(_observableCatch((response_: any) => {
+      if (response_ instanceof HttpResponseBase) {
+        try {
+          return this.processResult(response_ as any, fromJS);
+        } catch (e) {
+          return _observableThrow(e) as any as Observable<TResult[]>;
+        }
+      } else
+        return _observableThrow(response_) as any as Observable<TResult[]>;
+    }));
+  }
 
-    protected processAssociationRules(response: HttpResponseBase): Observable<DashboardTableAssociationRule[]> {
+  associationRules(): Observable<DashboardTableAssociationRule[]> {
+    return this.call<DashboardTableAssociationRule>("association-rules", DashboardTableAssociationRule.fromJS)
+  }
+
+  getTopProfitableProductsByProductPackType(): Observable<DashboardTableTopProfitableProductsPerPackType[]> {
+    return this.call<DashboardTableTopProfitableProductsPerPackType>("top-profitable-products-per-product-pack-type", DashboardTableTopProfitableProductsPerPackType.fromJS)
+  }
+
+  getSegmentDetails(): Observable<DashboardTableSegmentDetails[]> {
+    return this.call<DashboardTableSegmentDetails>("segment-details", DashboardTableSegmentDetails.fromJS)
+  }
+
+  getCustomerDistributionByCity(): Observable<DashboardTableCustomerDistributionByCity[]> {
+    return this.call<DashboardTableCustomerDistributionByCity>('customer-distribution-by-city', DashboardTableCustomerDistributionByCity.fromJS)
+  }
+
+  getTopProfitableProductsByProductTag(): Observable<DashboardTableTopProfitableProductsPerTag[]> {
+    return this.call<DashboardTableTopProfitableProductsPerTag>("top-profitable-products-per-product-tag", DashboardTableTopProfitableProductsPerTag.fromJS)
+  }
+
+    protected processResult<TResult>(response: HttpResponseBase, fromJS: (data: any) => TResult): Observable<TResult[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2897,7 +2921,7 @@ export class DashboardTablesClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(DashboardTableAssociationRule.fromJS(item));
+                    result200!.push(fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -4826,6 +4850,29 @@ export enum PredefinedVisualizationType {
     FuelBoxplot = "FuelBoxplot",
     FuelRadar = "FuelRadar",
     FuelPie = "FuelPie",
+
+    TopRevenueGeneratingCities = "TopRevenueGeneratingCities",
+    CustomerDistributionByCity = "CustomerDistributionByCity",
+
+    SegmentDetails = "SegmentDetails",
+
+    SalesByCustomerCategory = "SalesByCustomerCategory",
+    CustomerDistributionByCategory = "CustomerDistributionByCategory",
+    CustomerDistributionBySegment = "CustomerDistributionBySegment",
+
+    SalesByYear = "SalesByYear",
+    SalesByQuarter = "SalesByQuarter",
+    SalesByMonth = "SalesByMonth",
+    SalesByDate = "SalesByDate",
+    SalesByDay = "SalesByDay",
+    SalesByHour = "SalesByHour",
+    SalesForecasting = "SalesForecasting",
+
+    TopRevenueGeneratingProducts = "TopRevenueGeneratingProducts",
+    SalesByProductPackType = "SalesByProductPackType",
+    TopProfitableProductsPerPackType = "TopProfitableProductsPerPackType",
+    SalesByProductTag = "SalesByProductTag",
+    TopProfitableProductsPerTag = "TopProfitableProductsPerTag",
 }
 
 export class ConfigurableDashboardTileUpdateModel implements IConfigurableDashboardTileUpdateModel {

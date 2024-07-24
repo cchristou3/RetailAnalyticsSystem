@@ -11,8 +11,9 @@ import {
   XyCommonChartContext,
   XyCommonSeriesOptions
 } from "./xy.common";
+import {Title} from "../common-types/title";
 
-export type BarChartOptions = {
+export type BarChartOptions = Title & {
   datasetKey?: string;
 
   categoryField?: string;
@@ -27,7 +28,7 @@ export type BarChartOptions = {
   label?: TopLabelOptions;
 }
 
-export type BarChartSeriesOptions = {
+export type BarChartSeriesOptions = Title & {
   datasetKey?: string;
 
   descriptorName: string;
@@ -52,6 +53,7 @@ export function configureBarChart(wrapper: ICommonChartWrapper, options: BarChar
     baseAxisField: options.categoryField,
     isBaseAxisVertical: options.isHorizontal,
     label: options.label,
+    title: options.title
   });
 
   const seriesOptions = getSeriesOptions(xyContext, options);

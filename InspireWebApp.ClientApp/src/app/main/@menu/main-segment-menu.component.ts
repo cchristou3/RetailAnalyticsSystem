@@ -27,6 +27,12 @@ export class MainSegmentMenuComponent {
       label: 'Home',
       items: [
         {label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/configurable'},
+        {label: 'Demo Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/demo'},
+        {label: 'City Analysis Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/city-analysis'},
+        {label: 'Invoice Analysis Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/invoice-analysis'},
+        {label: 'Product Analysis Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/product-analysis'},
+        {label: 'Behavioural Analysis Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/behavioural-analysis'},
+        {label: 'Market Basket Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/predefined'},
       ],
     },
     {

@@ -29,6 +29,26 @@ const routes: Routes = [{
             .then(i => i.routes),
         },
         {
+          path: 'city-analysis',
+          loadChildren: () => import('./dashboards/city-analysis/city-analysis-dashboard.entrypoint')
+            .then(i => i.routes),
+        },
+        {
+          path: 'invoice-analysis',
+          loadChildren: () => import('./dashboards/invoice-analysis/invoice-analysis-dashboard.entrypoint')
+            .then(i => i.routes),
+        },
+        {
+          path: 'product-analysis',
+          loadChildren: () => import('./dashboards/product-analysis/product-analysis-dashboard.entrypoint')
+            .then(i => i.routes),
+        },
+        {
+          path: 'behavioural-analysis',
+          loadChildren: () => import('./dashboards/behavioural-analysis/behavioural-analysis-dashboard.entrypoint')
+            .then(i => i.routes),
+        },
+        {
           path: 'configurable',
           loadChildren: () => import('./dashboards/configurable/configurable-dashboard.entrypoint')
             .then(i => i.routes),

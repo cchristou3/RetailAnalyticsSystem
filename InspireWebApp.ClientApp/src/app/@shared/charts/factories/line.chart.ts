@@ -1,4 +1,5 @@
 ﻿import * as am5xy from "@amcharts/amcharts5/xy";
+import * as am5 from "@amcharts/amcharts5";
 import {ICommonChartWrapper} from "../common-chart.structures";
 import {DEFAULT_SERIES} from "../common-viz-data";
 import {getDefaultOrFirstSeries} from "./shared";
@@ -9,8 +10,9 @@ import {
   SimpleXySeriesDataSetter,
   XyCommonChartContext, XyCommonSeriesOptions
 } from "./xy.common";
+import {Title} from "../common-types/title";
 
-export type LineChartSeriesOptions = {
+export type LineChartSeriesOptions = Title & {
   datasetKey?: string;
 
   descriptorName: string;
@@ -19,7 +21,7 @@ export type LineChartSeriesOptions = {
   enableArea?: boolean;
 };
 
-export type LineChartOptions = {
+export type LineChartOptions = Title & {
   datasetKey?: string;
 
   series?: LineChartSeriesOptions[];
@@ -43,7 +45,10 @@ function getSeriesOptions(xyContext: XyCommonChartContext, options: LineChartOpt
 export function configureLineChart(wrapper: ICommonChartWrapper, options: LineChartOptions): void {
   const xyContext = configureCommonXyChart(wrapper, {
     baseAxisDataset: options.datasetKey,
+    title: options.title
   });
+
+
 
   const seriesOptions = getSeriesOptions(xyContext, options);
   const enableLegend = options.enableLegend ?? seriesOptions.length > 1;
