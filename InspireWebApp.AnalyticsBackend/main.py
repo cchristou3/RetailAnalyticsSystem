@@ -1,20 +1,19 @@
-from datetime import datetime
+from flask import Flask, jsonify
 
-import pandas as pd
-from pandas import DataFrame
+from predictive_modeling.forecasting import perform_forecast
+from services.rfm import segments_descriptions
 
-from predictive_modeling.association_rule_mining import mine_rules
-from services.description import describe
-from services.exploration import explore
+app = Flask(__name__)
 
+@app.route('/segment-details', methods=['GET'])
+def sales_by_hour():
+    return segments_descriptions
+
+@app.route('/sales/forecasting', methods=['GET'])
+def sales_forecasting():
+    return perform_forecast()
+
+
+# Run the Flask application
 if __name__ == '__main__':
-
-    # TODO: Revisit when doing predictive modeling
-
-    # Load the CSV file
-    file_path: str = 'Sales Data Online Shop.csv'
-    data: DataFrame = pd.read_csv(file_path, low_memory=False)
-
-    # explore(data, ignore_visalizations=False)
-    # describe(data)
-    mine_rules(data)
+    app.run(debug=False)

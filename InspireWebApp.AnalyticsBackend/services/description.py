@@ -38,6 +38,9 @@ def describe(data: DataFrame):
     print(top_products)
     print()
 
+    # Convert InvoiceDate and InvoiceTime to datetime
+    data['InvoiceDate'] = pd.to_datetime(data['InvoiceDate'])
+
     # Most profitable days
     daily_sales = data.groupby(data['InvoiceDate'].dt.date).agg({
         'UnitPrice': 'mean',  # Total sales per day
@@ -80,8 +83,6 @@ def describe(data: DataFrame):
     print()
 
     df = data
-    # Convert InvoiceDate and InvoiceTime to datetime
-    df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
     df['InvoiceTime'] = pd.to_datetime(df['InvoiceTime'], format='%H:%M:%S').dt.time
 
     # Combine InvoiceDate and InvoiceTime into a single datetime column

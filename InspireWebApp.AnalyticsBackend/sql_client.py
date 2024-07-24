@@ -1,98 +1,76 @@
-import pyodbc
+import pandas as pd
+from sqlalchemy import create_engine, MetaData, Table, update, Connection, Engine, Column, String, Float, Integer
+from sqlalchemy.orm import sessionmaker
 
 
 class SQLClient:
-
     def __init__(self):
+        self.engine: Engine = create_engine("mssql+pyodbc://sa:Password1!@PAMBOS\\SQLEXPRESS/InspireDatabase?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes")
+        self.connection: Connection = self.engine.connect()
+        self.metadata: MetaData = MetaData()
+        self.Session = sessionmaker(bind=self.engine)
 
-        # Define the connection string
-        self.connection_string = (
-            "DRIVER={ODBC Driver 17 for SQL Server};"
-            "SERVER=your_server_name;"
-            "DATABASE=your_database_name;"
-            "UID=your_username;"
-            "PWD=your_password"
-        )
+    def execute_select(self, query: str) -> pd.DataFrame:
+        with self.connection.begin():
+            return pd.read_sql(query, self.connection)
 
-        # Establish a connection to the database
-        conn = pyodbc.connect(self.connection_string)
-        cursor = conn.cursor()
+    def get_rfm_prerequisite_data(self) -> pd.DataFrame:
+        query = """
+           SELECT
+               [CustomerId]	= CustomerId,
+               [InvoiceId]		= I.Id,
+               [InvoiceDate]	= CAST(I.Date AS DATE),
+               [TotalPrice]	= ID.Quantity * ID.UnitPrice
+           FROM Invoices I
+           INNER JOIN InvoiceDetail ID		ON I.Id = ID.InvoiceId
+           """
+        return self.execute_select(query)
 
-        # Define the query
-        query = "SELECT * FROM your_table_name"
+    def get_fpm_prerequisite_data(self) -> pd.DataFrame:
+        query = """
+           SELECT
+                [CustomerId]		= CustomerId,
+                [InvoiceId]			= I.Id,
+                [InvoiceDate]		= CAST(I.[Date] AS DATE),
+                [TotalPrice]		= ID.Quantity * ID.UnitPrice,
+                [CustomerSegment]	= CU.Segment,
+                [ProductName]		= P.[Name],
+                [CustomerRfmScore]  = CU.RfmScore
+            FROM Invoices I
+            INNER JOIN InvoiceDetail ID			ON I.Id = ID.InvoiceId
+            INNER JOIN Customers CU				ON CU.Id = I.CustomerId
+            INNER JOIN Products P				ON P.Id = ID.ProductId
+           """
+        return self.execute_select(query)
 
-        # Execute the query
-        cursor.execute(query)
+    def get_arima_prerequisite_data(self) -> pd.DataFrame:
+        query = """
+            SELECT
+                [InvoiceDate]		= CAST(I.[Date] AS DATE),
+                [TotalSales]		= ID.Quantity * ID.UnitPrice,
+                [CustomerSegment]	= CU.Segment
+            FROM Invoices I
+            INNER JOIN InvoiceDetail ID			ON I.Id = ID.InvoiceId
+            INNER JOIN Customers CU				ON CU.Id = I.CustomerId
+           """
+        return self.execute_select(query)
 
-        # Fetch all rows from the executed query
-        rows = cursor.fetchall()
+    def update_customers(self, updates: list[dict]) -> None:
+        with self.connection.begin():
+            customers_table = Table('Customers', self.metadata, autoload_with=self.engine)
+            for update_data in updates:
+                stmt = (
+                    update(customers_table)
+                    .where(customers_table.c.Id == update_data['CustomerId'])
+                    .values(RfmScore=update_data['RfmScore'], Segment=update_data['Segment'])
+                )
+                self.connection.execute(stmt)
 
-        # Print the column names
-        columns = [column[0] for column in cursor.description]
-        print(columns)
-
-        # Print each row
-        for row in rows:
-            print(row)
-
-        # Close the connection
-        cursor.close()
-        conn.close()
-
-
-
-import pyodbc
-
-# Get the list of ODBC drivers installed on the system
-drivers = pyodbc.drivers()
-
-# Define the connection string
-connection_string = (
-    "DRIVER={ODBC Driver 18 for SQL Server};"
-    "SERVER=PAMBOS\\SQLEXPRESS;"
-    "DATABASE=InspireDatabase;"
-    "UID=sa;"
-    "PWD=Password1!;"
-    "TrustServerCertificate=yes"
-)
-
-# Establish a connection to the database
-conn = pyodbc.connect(connection_string)
-cursor = conn.cursor()
-
-# Define the query
-query = "SELECT DISTINCT [Tags] FROM SalesDataOnlineShop"
-
-# Execute the query
-cursor.execute(query)
-
-# Fetch all rows from the executed query
-rows = cursor.fetchall()
-
-# Print the column names
-columns = [column[0] for column in cursor.description]
-print(columns)
-
-tags = ''
-for row in rows:
-    '["Radio Control", "Realistic Sound"]'
-    value: str = row[0]
-    tags += value.replace('[', '').replace(']', '').replace('"', '') + ','
-
-tag_list = set(tags.split(','))
-
-for tag in tag_list:
-    print(f"('{tag}'),")
-
-print(tags)
-print()
-print(tag_list)
-
-# Close the connection
-cursor.close()
-conn.close()
-
-# Print the list of drivers
-print("ODBC Drivers Installed:")
-for driver in drivers:
-    print(driver)
+    def insert_rules(self, rules: list[dict]) -> None:
+        rules_table = Table('MinerAssocRules', self.metadata, autoload_with=self.engine)
+        with self.connection.begin():
+            try:
+                self.connection.execute(rules_table.delete())
+                self.connection.execute(rules_table.insert(), rules)
+            except Exception as e:
+                raise
