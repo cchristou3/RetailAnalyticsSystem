@@ -14,12 +14,9 @@ from services.utilities import to_excel
 import scipy.stats as stats
 
 
-def explore(data: DataFrame, ignore_visalizations: bool):
-    if ignore_visalizations is True:
-        return
+def explore(data: DataFrame):
 
     helper = Helper()
-    graph_helper = GraphHelper()
 
     # Display the first few rows of the dataset to get an idea of its structure
     print(data.head())
