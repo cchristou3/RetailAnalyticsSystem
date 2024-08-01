@@ -19,7 +19,7 @@ export const dataDescriptor: CommonVizDataDescriptor = {
 
 const options: LineChartOptions = {
   enableArea: true,
-  title: 'Sales by Day of the Week'
+  title: 'Sales by Day of the Week (Mean)'
 }
 
 export const configureFn = createConfigureChartFn(configureLineChart, options);

@@ -19,7 +19,7 @@ export const dataDescriptor: CommonVizDataDescriptor = {
 
 const options: LineChartOptions = {
   enableArea: true,
-  title: 'Quarterly Sales'
+  title: 'Quarterly Sales (Mean)'
 }
 
 export const configureFn = createConfigureChartFn(configureLineChart, options);

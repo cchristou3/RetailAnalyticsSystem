@@ -20,19 +20,44 @@ import {ButtonModule} from "primeng/button";
     FormsModule,
     ButtonModule,
   ],
-  templateUrl: './behavioural-analysis-dashboard.component.html',
-  styleUrls: ['./behavioural-analysis-dashboard.component.scss'],
+  templateUrl: './sales-performance-analysis-dashboard.component.html',
+  styleUrls: ['./sales-performance-analysis-dashboard.component.scss'],
 })
-export class BehaviouralAnalysisDashboardComponent {
+export class SalesPerformanceAnalysisDashboardComponent {
   private readonly predefinedVisSpecProvider = inject(PredefinedVisSpecProvider);
 
   tileModels: Readonly<TileModel<PredefinedVisualizationType | undefined>[]> = [
     {
-      layoutItem: {id: '', x:0, y:0, w:6, h:6, minW:2, minH:3},
-      data: PredefinedVisualizationType.AssociationRules,
+      layoutItem: {id: '', x: 0, y: 0, w: 6, h: 3, minW: 2, minH: 3},
+      data: PredefinedVisualizationType.SalesByDate,
     },
+    {
+      layoutItem: {id: '', x: 0, y: 7, w: 3, h: 4, minW: 2, minH: 3},
+      data: PredefinedVisualizationType.SalesByQuarter,
+    },
+    {
+      layoutItem: {id: '', x: 3, y: 7, w: 3, h: 4, minW: 2, minH: 3},
+      data: PredefinedVisualizationType.SalesByYear,
+    },
+    {
+      // AVG: People tend to buy more items the later they go to the retail.
+      layoutItem: {id: '', x: 0, y: 3, w: 3, h: 4, minW: 2, minH: 3},
+      data: PredefinedVisualizationType.SalesByMonth,
+    },
+    {
+      layoutItem: {id: '', x: 3, y: 3, w: 3, h: 4, minW: 2, minH: 3},
+      data: PredefinedVisualizationType.SalesForecasting,
+    },
+    {
+      layoutItem: {id: '', x: 0, y: 11, w: 3, h: 4, minW: 2, minH: 3},
+      data: PredefinedVisualizationType.SalesByDay,
+    },
+    {
+      layoutItem: {id: '', x: 3, y: 11, w: 3, h: 4, minW: 2, minH: 3},
+      data: PredefinedVisualizationType.SalesByHour,
+    }
   ].map((currElement, index) => {
-    currElement.layoutItem.id  = index.toString()
+    currElement.layoutItem.id = index.toString()
     return currElement
   });
 

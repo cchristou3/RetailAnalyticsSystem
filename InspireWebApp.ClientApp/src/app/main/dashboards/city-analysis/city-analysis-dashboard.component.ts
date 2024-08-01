@@ -29,31 +29,11 @@ export class CityAnalysisDashboardComponent {
   tileModels: Readonly<TileModel<PredefinedVisualizationType | undefined>[]> = [
     {
       layoutItem: {id: '', x: 0, y: 0, w: 6, h: 3, minW: 2, minH: 3},
-      data: PredefinedVisualizationType.AssociationRules,
-    },
-    {
-      layoutItem: {id: '', x: 0, y: 0, w: 6, h: 3, minW: 2, minH: 3},
-      data: PredefinedVisualizationType.SalesByCustomerCategory,
-    },
-    {
-      layoutItem: {id: '', x: 0, y: 0, w: 6, h: 3, minW: 2, minH: 3},
-      data: PredefinedVisualizationType.CustomerDistributionByCategory,
-    },
-    {
-      layoutItem: {id: '', x: 0, y: 0, w: 6, h: 3, minW: 2, minH: 3},
-      data: PredefinedVisualizationType.CustomerDistributionBySegment,
-    },
-    {
-      layoutItem: {id: '', x: 0, y: 0, w: 6, h: 3, minW: 2, minH: 3},
       data: PredefinedVisualizationType.TopRevenueGeneratingCities,
     },
     {
       layoutItem: {id: '', x: 0, y: 0, w: 6, h: 3, minW: 2, minH: 3},
       data: PredefinedVisualizationType.CustomerDistributionByCity,
-    },
-    {
-      layoutItem: {id: '', x: 0, y: 0, w: 6, h: 3, minW: 2, minH: 3},
-      data: PredefinedVisualizationType.SegmentDetails,
     },
   ].map((currElement, index) => {
     currElement.layoutItem.id  = index.toString()

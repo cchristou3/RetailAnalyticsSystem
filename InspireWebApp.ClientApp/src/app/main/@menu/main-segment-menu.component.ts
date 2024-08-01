@@ -26,23 +26,22 @@ export class MainSegmentMenuComponent {
     {
       label: 'Home',
       items: [
-        {label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/configurable'},
-        {label: 'Demo Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/demo'},
-        {label: 'City Analysis Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/city-analysis'},
-        {label: 'Invoice Analysis Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/invoice-analysis'},
-        {label: 'Product Analysis Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/product-analysis'},
-        {label: 'Behavioural Analysis Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/behavioural-analysis'},
-        {label: 'Market Basket Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/predefined'},
+        // {label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/configurable'},
+        {label: 'Sales Performance Analysis', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/sales-performance-analysis'},
+        {label: 'City Analysis', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/city-analysis'},
+        {label: 'Customer Analysis', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/customer-analysis'},
+        {label: 'Product Analysis', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/product-analysis'},
+        {label: 'Behavioural Analysis', icon: 'pi pi-fw pi-chart-bar', routerLink: '/app/dashboards/behavioural-analysis'},
       ],
     },
-    {
-      label: 'Data management',
-      items: [
-        {label: 'Product categories', icon: 'pi pi-fw pi-briefcase', routerLink: '/app/product-categories'},
-        {label: 'Promotion types', icon: 'pi pi-fw pi-briefcase', routerLink: '/app/promotion-types'},
-        {label: 'Products', icon: 'pi pi-fw pi-briefcase', routerLink: '/app/products'},
-        {label: 'Suppliers', icon: 'pi pi-fw pi-briefcase', routerLink: '/app/suppliers'},
-      ],
-    },
+    // {
+    //   label: 'Data management',
+    //   items: [
+    //     {label: 'Product categories', icon: 'pi pi-fw pi-briefcase', routerLink: '/app/product-categories'},
+    //     {label: 'Promotion types', icon: 'pi pi-fw pi-briefcase', routerLink: '/app/promotion-types'},
+    //     {label: 'Products', icon: 'pi pi-fw pi-briefcase', routerLink: '/app/products'},
+    //     {label: 'Suppliers', icon: 'pi pi-fw pi-briefcase', routerLink: '/app/suppliers'},
+    //   ],
+    // },
   ];
 }

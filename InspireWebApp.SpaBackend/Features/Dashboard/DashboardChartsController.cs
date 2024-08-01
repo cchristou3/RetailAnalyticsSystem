@@ -338,6 +338,8 @@ public partial class DashboardChartsController : ControllerBase
     [ResponseCache(Duration = 5)]
     public async Task<object> GetSalesByMonth()
     {
+
+        await Task.Delay(5000);
         _logger.Info("GET DashboardCharts.GetSalesByMonth");
         var result = await _dbContext.MonthlySalesRecords
             .FromSql($@"

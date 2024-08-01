@@ -60,7 +60,7 @@ public static class Bootstrapper
 
         services.AddIdentityCore<ApplicationUser>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedAccount = false;
 
                 // Simplify the requirements for dev/testing/demo
                 options.Password.RequiredLength = 2;

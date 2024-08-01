@@ -20,12 +20,17 @@ const routes: Routes = [{
       children: [
         {
           path: '',
-          redirectTo: 'configurable',
+          redirectTo: 'sales-performance-analysis',
           pathMatch: 'full',
         },
+        // {
+        //   path: 'demo',
+        //   loadChildren: () => import('./dashboards/demo/demo-dashboard.entrypoint')
+        //     .then(i => i.routes),
+        // },
         {
-          path: 'demo',
-          loadChildren: () => import('./dashboards/demo/demo-dashboard.entrypoint')
+          path: 'sales-performance-analysis',
+          loadChildren: () => import('./dashboards/sales-performance-analysis/sales-performance-analysis-dashboard.entrypoint')
             .then(i => i.routes),
         },
         {
@@ -34,8 +39,8 @@ const routes: Routes = [{
             .then(i => i.routes),
         },
         {
-          path: 'invoice-analysis',
-          loadChildren: () => import('./dashboards/invoice-analysis/invoice-analysis-dashboard.entrypoint')
+          path: 'customer-analysis',
+          loadChildren: () => import('./dashboards/customer-analysis/customer-analysis-dashboard.entrypoint')
             .then(i => i.routes),
         },
         {
@@ -48,21 +53,21 @@ const routes: Routes = [{
           loadChildren: () => import('./dashboards/behavioural-analysis/behavioural-analysis-dashboard.entrypoint')
             .then(i => i.routes),
         },
-        {
-          path: 'configurable',
-          loadChildren: () => import('./dashboards/configurable/configurable-dashboard.entrypoint')
-            .then(i => i.routes),
-        },
-        {
-          path: 'predefined',
-          children: [
-            {
-              path: 'market-basket',
-              loadChildren: () => import('./dashboards/predefined/market-basket/market-basket.entrypoint')
-                .then(i => i.routes),
-            },
-          ],
-        },
+        // {
+        //   path: 'configurable',
+        //   loadChildren: () => import('./dashboards/configurable/configurable-dashboard.entrypoint')
+        //     .then(i => i.routes),
+        // },
+        // {
+        //   path: 'predefined',
+        //   children: [
+        //     {
+        //       path: 'market-basket',
+        //       loadChildren: () => import('./dashboards/predefined/market-basket/market-basket.entrypoint')
+        //         .then(i => i.routes),
+        //     },
+        //   ],
+        // },
       ],
     },
     {

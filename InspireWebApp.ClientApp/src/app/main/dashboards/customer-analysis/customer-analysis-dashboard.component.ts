@@ -20,16 +20,28 @@ import {ButtonModule} from "primeng/button";
     FormsModule,
     ButtonModule,
   ],
-  templateUrl: './invoice-analysis-dashboard.component.html',
-  styleUrls: ['./invoice-analysis-dashboard.component.scss'],
+  templateUrl: './customer-analysis-dashboard.component.html',
+  styleUrls: ['./customer-analysis-dashboard.component.scss'],
 })
-export class InvoiceAnalysisDashboardComponent {
+export class CustomerAnalysisDashboardComponent {
   private readonly predefinedVisSpecProvider = inject(PredefinedVisSpecProvider);
 
   tileModels: Readonly<TileModel<PredefinedVisualizationType | undefined>[]> = [
     {
-      layoutItem: {id: '', x: 0, y: 0, w: 6, h: 3, minW: 2, minH: 3},
-      data: PredefinedVisualizationType.AssociationRules,
+      layoutItem: {id: '', x :0, y :0, w :3, h :3, minW :2, minH :3},
+      data: PredefinedVisualizationType.SalesByCustomerCategory,
+    },
+    {
+      layoutItem: {id: '', x :3, y :0, w :3, h :3, minW :2, minH :3},
+      data: PredefinedVisualizationType.CustomerDistributionByCategory,
+    },
+    {
+      layoutItem: {id: '', x :0, y :3, w :6, h :3, minW :2, minH :3},
+      data: PredefinedVisualizationType.CustomerDistributionBySegment,
+    },
+    {
+      layoutItem: {id: '', x :0, y :3, w :6, h :3, minW :2, minH :3},
+      data: PredefinedVisualizationType.SegmentDetails,
     }
   ].map((currElement, index) => {
     currElement.layoutItem.id  = index.toString()

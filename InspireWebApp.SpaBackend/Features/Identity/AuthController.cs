@@ -143,21 +143,21 @@ public partial class AuthController : ControllerBase
 
         if (!result.Succeeded) return Ok(result);
 
-        var callbackUrl = await GenerateConfirmEmailUrl(user);
-
-        // Don't wait for the email to be sent
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await _authMailer.SendEmailConfirm(model.Email, callbackUrl);
-            }
-            catch (Exception e)
-            {
-                // TODO: Retry system
-                _logger.Error(e, "Failed to send registration email");
-            }
-        });
+        // var callbackUrl = await GenerateConfirmEmailUrl(user);
+        //
+        // // Don't wait for the email to be sent
+        // _ = Task.Run(async () =>
+        // {
+        //     try
+        //     {
+        //         await _authMailer.SendEmailConfirm(model.Email, callbackUrl);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         // TODO: Retry system
+        //         _logger.Error(e, "Failed to send registration email");
+        //     }
+        // });
 
         return Ok(result);
     }
