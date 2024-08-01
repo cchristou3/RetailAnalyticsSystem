@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask
 
 from predictive_modeling.forecasting import perform_forecast
 from services.rfm import segments_descriptions

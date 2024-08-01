@@ -29,7 +29,6 @@ def exponential_smoothing():
 
     from statsmodels.tsa.holtwinters import ExponentialSmoothing
     from sklearn.metrics import mean_squared_error
-    import numpy as np
 
     # Define a parameter grid for Exponential Smoothing
     param_grid_es = {

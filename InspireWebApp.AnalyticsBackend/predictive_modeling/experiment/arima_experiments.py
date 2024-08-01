@@ -1,9 +1,8 @@
+import matplotlib.pyplot as plt
 import pandas as pd
-
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.model_selection import train_test_split
 from statsmodels.tsa.arima.model import ARIMA
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-import matplotlib.pyplot as plt
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
 
@@ -234,7 +233,6 @@ def SARIMAX_EXAMPLE():
     print(data.head())
 
     # Step 2: Data Pre-Processing
-    from datetime import datetime
 
     # Combine InvoiceDate and InvoiceTime into a single datetime column
     data['InvoiceDatetime'] = pd.to_datetime(data['InvoiceDate'] + ' ' + data['InvoiceTime'])
@@ -407,7 +405,7 @@ def arima_vs_sarima():
 
     from statsmodels.tsa.arima.model import ARIMA
     from sklearn.model_selection import ParameterGrid
-    from sklearn.metrics import mean_squared_error, mean_absolute_error
+    from sklearn.metrics import mean_squared_error
 
     # Define a more extensive parameter grid for ARIMA
     param_grid_arima = {

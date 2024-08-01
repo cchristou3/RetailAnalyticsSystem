@@ -1,9 +1,7 @@
 import pandas as pd
 from pandas import DataFrame
 
-from services.description import describe
 from services.exploration import explore
-
 
 """
     The file was used to perform the initial data exploratory analysis 

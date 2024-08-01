@@ -1,5 +1,5 @@
 import pandas as pd
-from sqlalchemy import create_engine, MetaData, Table, update, Connection, Engine, Column, String, Float, Integer
+from sqlalchemy import create_engine, MetaData, Table, update, Connection, Engine
 from sqlalchemy.orm import sessionmaker
 
 

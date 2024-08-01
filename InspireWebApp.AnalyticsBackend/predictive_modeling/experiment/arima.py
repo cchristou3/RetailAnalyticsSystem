@@ -1,16 +1,12 @@
-import pickle
-
-import numpy as np
-import pmdarima as pm
 from typing import Tuple
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
-from pmdarima import acf
-
+import pmdarima as pm
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.model_selection import train_test_split
 from statsmodels.tsa.arima.model import ARIMA
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-import matplotlib.pyplot as plt
 from statsmodels.tsa.base.prediction import PredictionResults
 
 from sql_client import SQLClient

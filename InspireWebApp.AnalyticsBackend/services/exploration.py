@@ -1,17 +1,15 @@
 import ast
 from typing import List
 
-import pandas as pd
+import scipy.stats as stats
+import seaborn as sns
 from matplotlib import pyplot as plt
 from pandas import DataFrame
 from pandas.core.dtypes.common import is_numeric_dtype
-import seaborn as sns
 
 from services.graph_helper import GraphHelper
 from services.helper import Helper
 from services.utilities import to_excel
-
-import scipy.stats as stats
 
 
 def explore(data: DataFrame):
