@@ -5,9 +5,12 @@ from pandas import DataFrame
 
 from services.graph_helper import GraphHelper
 from services.helper import Helper
+from sql_client import SQLClient
 
 
-def describe(data: DataFrame):
+def describe():
+
+    data = SQLClient().get_describe_prerequisite_data()
 
     data['Sales'] = data['Quantity'] * data['UnitPrice']
 
@@ -21,8 +24,8 @@ def describe(data: DataFrame):
     # Analyze Customer Behavior:
     # Customer behavior analysis
     customer_behavior = data.groupby('CustomerId').agg({
-        'InvoiceID': 'count',            # Count of invoices per customer
-        'UnitPrice': 'mean'              # Average transaction amount per customer
+        'InvoiceId': 'count',            # Count of invoices per customer
+        'UnitPrice': 'sum'              # Average transaction amount per customer
     })
     print(customer_behavior.head())
 
@@ -43,8 +46,8 @@ def describe(data: DataFrame):
 
     # Most profitable days
     daily_sales = data.groupby(data['InvoiceDate'].dt.date).agg({
-        'UnitPrice': 'mean',  # Total sales per day
-        'InvoiceID': 'count'  # Number of transactions per day
+        'UnitPrice': 'sum',  # Total sales per day
+        'InvoiceId': 'count'  # Number of transactions per day
     }).reset_index()
 
     daily_sales.columns = ['InvoiceDate', 'AverageSales', 'TransactionCount']
@@ -74,27 +77,26 @@ def describe(data: DataFrame):
     print()
 
     # Invoice metrics:
-    invoice_metrics = data.groupby('InvoiceID').agg({
+    invoice_metrics = data.groupby('InvoiceId').agg({
         'Quantity': 'sum',  # Total quantity per invoice
-        'UnitPrice': 'mean'  # Average unit price per invoice
+        'UnitPrice': 'sum'  # Average unit price per invoice
     })
     print('Invoice metrics')
     print(invoice_metrics.head())
     print()
 
     df = data
-    df['InvoiceTime'] = pd.to_datetime(df['InvoiceTime'], format='%H:%M:%S').dt.time
 
     # Combine InvoiceDate and InvoiceTime into a single datetime column
-    df['InvoiceDateTime'] = df.apply(lambda row: datetime.combine(row['InvoiceDate'], row['InvoiceTime']), axis=1)
+    df['InvoiceDateTime'] = df['InvoiceDate']
 
     # Display the first few rows to verify
     print(df.head())
 
     # Aggregate sales by day
     daily_sales = df.groupby(df['InvoiceDate'].dt.date).agg({
-        'UnitPrice': 'mean',  # Total sales per day
-        'InvoiceID': 'count'  # Number of transactions per day
+        'UnitPrice': 'sum',  # Total sales per day
+        'InvoiceId': 'count'  # Number of transactions per day
     }).reset_index()
 
     daily_sales.columns = ['InvoiceDate', 'AverageSales', 'TransactionCount']
@@ -106,8 +108,8 @@ def describe(data: DataFrame):
     # Aggregate sales by week
     df['Week'] = df['InvoiceDate'].dt.isocalendar().week
     weekly_sales = df.groupby(df['Week']).agg({
-        'UnitPrice': 'mean',
-        'InvoiceID': 'count'
+        'UnitPrice': 'sum',
+        'InvoiceId': 'count'
     }).reset_index()
 
     weekly_sales.columns = ['Week', 'AverageSales', 'TransactionCount']
@@ -117,8 +119,8 @@ def describe(data: DataFrame):
     # Aggregate sales by month
     df['Month'] = df['InvoiceDate'].dt.to_period('M')
     monthly_sales = df.groupby(df['Month']).agg({
-        'UnitPrice': 'mean',
-        'InvoiceID': 'count'
+        'UnitPrice': 'sum',
+        'InvoiceId': 'count'
     }).reset_index()
 
     monthly_sales.columns = ['Month', 'AverageSales', 'TransactionCount']
@@ -131,8 +133,8 @@ def describe(data: DataFrame):
     df['Quarter'] = df['InvoiceDate'].dt.to_period('Q')
 
     quarterly_sales = df[df['Quarter'] != '2016Q2'].groupby(df['Quarter']).agg({
-        'UnitPrice': 'mean',
-        'InvoiceID': 'count'
+        'UnitPrice': 'sum',
+        'InvoiceId': 'count'
     }).reset_index()
 
     quarterly_sales.columns = ['Quarter', 'AverageSales', 'TransactionCount']
@@ -145,8 +147,8 @@ def describe(data: DataFrame):
     # Aggregate sales by hour
     df['Hour'] = df['InvoiceDateTime'].dt.hour
     hourly_sales = df.groupby(df['Hour']).agg({
-        'UnitPrice': 'mean',
-        'InvoiceID': 'count'
+        'UnitPrice': 'sum',
+        'InvoiceId': 'count'
     }).reset_index()
 
     hourly_sales.columns = ['Hour', 'AverageSales', 'TransactionCount']
@@ -214,3 +216,5 @@ def describe(data: DataFrame):
     # Quarterly: The retail company earns most of its annual profits in the second, third, and fourth quarter.
     # The first quarter is the least profitable.
 
+
+describe()

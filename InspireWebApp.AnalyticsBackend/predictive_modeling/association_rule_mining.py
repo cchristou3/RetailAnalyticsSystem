@@ -5,6 +5,7 @@ from mlxtend.frequent_patterns import fpmax, association_rules, fpgrowth
 from mlxtend.preprocessing import TransactionEncoder
 from pandas import DataFrame
 
+from services.utilities import to_excel
 from sql_client import SQLClient
 
 
@@ -205,6 +206,8 @@ def mine_rules_with_rfm_segments():
     all_rules['Support'] = all_rules['Support'].round(5)
     all_rules['Lift'] = all_rules['Lift'].round(5)
     all_rules['Confidence'] = all_rules['Confidence'].round(5)
+
+    to_excel(all_rules, 'rules.xlsx')
 
     all_rules_dict = all_rules.to_dict(orient='records')
     print(all_rules_dict)

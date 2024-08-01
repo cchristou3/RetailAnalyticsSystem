@@ -85,19 +85,50 @@ def explore(data: DataFrame):
     # graph_helper.plot_boxplot(data, 'diagnosis', 'texture_mean')
     # graph_helper.plot_boxplot(data, 'diagnosis', 'perimeter_mean')
     # graph_helper.plot_boxplot(data, 'diagnosis', 'area_mean')
-
-    # helper.visualize_outliers(data, numeric_columns)
+    #
+    helper.visualize_outliers(data, numeric_columns)
     #
     # helper.print_correlations(data[numeric_columns])
     # helper.visualize_correlations(data[numeric_columns])
-    #
+
+    graph_helper = GraphHelper()
     # graph_helper.plot_histograms(data, numeric_columns)
+
+    sns.set(style="whitegrid")
+    # Create a figure with one row and three columns
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
+    # Plot the histogram for the 'Weight' column
+    axes[0].hist(data['Weight'], bins=10, color='blue', edgecolor='black')
+    axes[0].set_title('Weight Distribution')
+    axes[0].set_xlabel('Weight')
+    axes[0].set_ylabel('Frequency')
+
+    # Plot the histogram for the 'UnitPrice' column
+    axes[1].hist(data['UnitPrice'], bins=50, color='green', edgecolor='black')
+    axes[1].set_title('UnitPrice Distribution')
+    axes[1].set_xlabel('UnitPrice')
+    axes[1].set_ylabel('Frequency')
+
+    # Plot the histogram for the 'Quantity' column
+    axes[2].hist(data['Quantity'], bins=50, color='red', edgecolor='black')
+    axes[2].set_title('Quantity Distribution')
+    axes[2].set_xlabel('Quantity')
+    axes[2].set_ylabel('Frequency')
+
+    # Adjust layout to prevent overlap
+    plt.tight_layout()
+
+    # Show the plot
+    plt.show()
 
     p_value_cut_off = 0.05
 
     categorical_columns = [column for column in data.columns if
                            column not in numeric_columns and column not in ["InvoiceDate", "InvoiceTime", "ProductName",
                                                                             "CityName", "Tags"]]
+
+    correlation_stats = []
     for categorical_column in categorical_columns:
         for numeric_column in numeric_columns:
 
@@ -116,7 +147,16 @@ def explore(data: DataFrame):
                 print(
                     f'{categorical_column} <-> {numeric_column} | Kruskal-Wallis H-statistic: {kruskal_result.statistic}, p-value: {kruskal_result.pvalue}')
 
+                correlation_stats.append({
+                    'Categorical Feature': categorical_column,
+                    'Numeric Feature': numeric_column,
+                    'H-statistic': kruskal_result.statistic,
+                    'P-value': kruskal_result.pvalue
+                })
                 # plt.figure(figsize=(10, 6))
                 # sns.boxplot(x=categorical_column, y=numeric_column, data=data)
                 # plt.title(f'Violin Plot of {numeric_column} by {categorical_column}')
                 # plt.show()
+
+    # Output correlation_stats in an Excel file
+    to_excel(correlation_stats, "correlation_stats.xlsx")

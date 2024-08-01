@@ -12,7 +12,7 @@ from services.exploration import explore
 if __name__ == '__main__':
 
     # Define the file path to the CSV file containing sales data
-    file_path: str = 'Sales Data Online Shop.csv'
+    file_path: str = './../Sales Data Online Shop.csv'
 
     # Load the CSV file into a pandas DataFrame
     # Setting low_memory=False to prevent dtype guessing and reduce memory usage
@@ -22,4 +22,4 @@ if __name__ == '__main__':
     explore(data)
 
     # Generate descriptive statistics for the loaded DataFrame
-    describe(data)
+    # describe(data)

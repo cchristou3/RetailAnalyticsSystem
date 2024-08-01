@@ -1,10 +1,11 @@
 import pandas as pd
 
+from services.utilities import to_excel
 from sql_client import SQLClient
 
 # https://www.datacamp.com/tutorial/introduction-customer-segmentation-python?dc_referrer=https%3A%2F%2Fwww.bing.com%2F
 # https://www.optimove.com/resources/learning-center/rfm-segmentation
-segments_descriptions = pd.DataFrame({
+segments_descriptions_df = pd.DataFrame({
     'Segment': [
         'Best Customers', 'Loyal Customers', 'Potential Loyalists', 'Big Spenders',
         'New Customers', 'Promising', 'Need Attention', 'High Value',
@@ -23,19 +24,19 @@ segments_descriptions = pd.DataFrame({
         'Customers who have not purchased recently and show low frequency and spend.',
         'Customers who do not fit into the predefined categories or are not yet fully analyzed.'
     ],
-    # 'Criteria': [
-    #     'Recency: 5 (Most recent), Frequency: 5 (High frequency), Monetary: 5 (High spend)',
-    #     'Recency: 4 or 5, Frequency: 4 or 5, Monetary: 4 or 5',
-    #     'Recency: 3, Frequency: 4 or 5, Monetary: 3 or 4',
-    #     'Recency: 2 or 3, Frequency: 2 or 3, Monetary: 4 or 5',
-    #     'Recency: 5, Frequency: 1 or 2, Monetary: 4 or 5',
-    #     'Recency: 4, Frequency: 2 or 3, Monetary: 2 or 3',
-    #     'Recency: 3 or 4, Frequency: 2 or 3, Monetary: 1 or 2',
-    #     'Recency: 2 or 3, Frequency: 2 or 3, Monetary: 3 or 4',
-    #     'Recency: 2 or 3, Frequency: 1 or 2, Monetary: 1 or 2',
-    #     'Recency: 1, Frequency: 1, Monetary: 1',
-    #     'Varies based on data; typically residual category.'
-    # ],
+    'Criteria': [
+        'Recency: 5 (Most recent), Frequency: 5 (High frequency), Monetary: 5 (High spend)',
+        'Recency: 4 or 5, Frequency: 4 or 5, Monetary: 4 or 5',
+        'Recency: 3, Frequency: 4 or 5, Monetary: 3 or 4',
+        'Recency: 2 or 3, Frequency: 2 or 3, Monetary: 4 or 5',
+        'Recency: 5, Frequency: 1 or 2, Monetary: 4 or 5',
+        'Recency: 4, Frequency: 2 or 3, Monetary: 2 or 3',
+        'Recency: 3 or 4, Frequency: 2 or 3, Monetary: 1 or 2',
+        'Recency: 2 or 3, Frequency: 2 or 3, Monetary: 3 or 4',
+        'Recency: 2 or 3, Frequency: 1 or 2, Monetary: 1 or 2',
+        'Recency: 1, Frequency: 1, Monetary: 1',
+        'Varies based on data; typically residual category.'
+    ],
     'TypicalActions': [
         'Reward with exclusive offers and loyalty programs.<br>Personalize communication.<br>Upsell and cross-sell premium products.',
         'Maintain engagement with regular updates.<br>Offer loyalty rewards.<br>Solicit feedback to improve experience.',
@@ -49,9 +50,13 @@ segments_descriptions = pd.DataFrame({
         'Target with re-engagement campaigns.<br>Offer substantial discounts or offers.<br>Analyze reasons for churn to prevent future occurrences.',
         'Analyze further for insights.<br>Monitor for trends.<br>Include in general marketing campaigns.'
     ]
-}).to_json(orient='records')
+})
+
+segments_descriptions = segments_descriptions_df .to_json(orient='records')
 
 print(segments_descriptions)
+
+to_excel(segments_descriptions_df, 'Segments.xlsx')
 
 def find_most_impactful_customers(rfm_df):
     # Calculate Total Spending by quantile

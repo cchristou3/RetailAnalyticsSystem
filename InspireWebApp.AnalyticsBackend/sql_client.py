@@ -43,6 +43,30 @@ class SQLClient:
            """
         return self.execute_select(query)
 
+    def get_describe_prerequisite_data(self) -> pd.DataFrame:
+        query = """
+            SELECT
+                [CustomerId]		= CustomerId,
+                [InvoiceId]			= I.Id,
+                [InvoiceDate]		= I.[Date],
+                [UnitPrice]		    = ID.UnitPrice,
+                [Quantity]          = ID.Quantity,
+                [CustomerSegment]	= CU.Segment,
+                [ProductName]		= P.[Name],
+                [CustomerRfmScore]  = CU.RfmScore,
+                [PackageType]		= PPT.[Name],
+                [CustomerCategory]	= CC.[Name],
+                [CityName]			= CI.[Name]
+            FROM Invoices I
+            INNER JOIN InvoiceDetail ID			ON I.Id = ID.InvoiceId
+            INNER JOIN Customers CU				ON CU.Id = I.CustomerId
+            INNER JOIN Products P				ON P.Id = ID.ProductId
+            INNER JOIN ProductPackageTypes PPT	ON PPT.Id = P.PackageTypeId
+            INNER JOIN CustomerCategories CC	ON CC.Id = CU.CustomerCategoryId
+            INNER JOIN Cities CI				ON CI.Id = CU.CityId
+           """
+        return self.execute_select(query)
+
     def get_arima_prerequisite_data(self) -> pd.DataFrame:
         query = """
             SELECT

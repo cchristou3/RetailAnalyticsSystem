@@ -376,7 +376,7 @@ def exercise():
 
     model_4 = ARIMA(train, order=best_params['order'])
     model_4_fit = model_4.fit()
-    evaluate_model(model_4_fit, train, test)
+    # evaluate_model(model_4_fit, train, test)
 
     start = len(train)
     end = len(train) + len(test) - 1
@@ -387,7 +387,7 @@ def exercise():
     m4_predictions = model_4_fit.predict(start=start, end=end, dynamic=False, typ='levels').rename(
         'Model 4 Predictions')
 
-    ax: plt.Axes = test.plot(legend=True, figsize=(12, 6), title='US Liquor Retail Sales, Actual v.s. Forecasted')
+    ax: plt.Axes = test.plot(legend=True, figsize=(12, 6), title='Sales, Actual v.s. Forecasted')
     m1_predictions.plot(legend=True)
     m2_predictions.plot(legend=True)
     m3_predictions.plot(legend=True)
@@ -397,7 +397,7 @@ def exercise():
     plt.show()
 
 
-# exercise()
+exercise()
 
 comments_on_plot = """
 Original Series
@@ -424,7 +424,9 @@ ADF Statistic: If the ADF statistic is significantly lower than the critical val
 p-value: A p-value less than 0.05 typically suggests rejecting the null hypothesis of a unit root, indicating stationarity.
 If your ADF test for the first-differenced series results in a low p-value (typically <0.05), it further confirms that 1st differencing is sufficient.
 
-MAIN CONCLUSION: Use d = 1 for the AROMA model (order of differencing)
+The p-value for the Augmented Dickey-Fuller (ADF) Test was 0.007496603033164487, meaning that the 1st differencing makes the dataset stationary.
+
+MAIN CONCLUSION: Use d = 1 for the ARIMA model (order of differencing)
 """
 
 comments_on_pacf_plot = """
