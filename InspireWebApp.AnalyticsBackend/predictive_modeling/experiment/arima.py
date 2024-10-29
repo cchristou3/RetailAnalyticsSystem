@@ -9,23 +9,21 @@ from sklearn.model_selection import train_test_split
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.base.prediction import PredictionResults
 
+from predictive_modeling.constants import DATA_FILE_PATH
 from sql_client import SQLClient
 
 
-def run():
+def daily_sales_forecast():
     # TODO: Revisit when doing predictive modeling
 
     # Load the CSV file
-    file_path: str = '../../Sales Data Online Shop.csv'
+    file_path: str = DATA_FILE_PATH
     data: pd.DataFrame = pd.read_csv(file_path, low_memory=False)
 
     # Data Preprocessing
     data['InvoiceDate'] = pd.to_datetime(data['InvoiceDate'])
     data['Date'] = data['InvoiceDate'].dt.date
     data['Date'] = pd.to_datetime(data['Date'])
-
-    # latest_year = data['Date'].max().year
-    # data = data[data['Date'].dt.year == latest_year]
 
     data.sort_values(by='Date', inplace=True)
 
@@ -64,15 +62,9 @@ def run():
     plt.show()
 
 
-def run2():
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    from sklearn.metrics import mean_squared_error, mean_absolute_error
-    from statsmodels.tsa.arima.model import ARIMA
-    from sklearn.model_selection import train_test_split
-
+def forecast_sales_by_interval():
     # Load the CSV file
-    file_path: str = '../../Sales Data Online Shop.csv'
+    file_path: str = DATA_FILE_PATH
     data: pd.DataFrame = pd.read_csv(file_path, low_memory=False)
 
     # Data Preprocessing
@@ -145,7 +137,6 @@ def fit_arima(order, train, test):
 
 
 def evaluate_model(fitted, train, test):
-
     print(f'Summary: {fitted.summary()}')
 
     result = fitted.get_forecast(len(test), alpha=0.05)  # 95% conf
@@ -219,7 +210,7 @@ def forecast_accuracy(forecast, actual):
              'Min-Max Error (minmax)': minmax})
 
 
-def exercise():
+def monthly_sales_arima_tuning():
     data: pd.DataFrame = SQLClient().get_arima_prerequisite_data()
 
     data['InvoiceDate'] = pd.to_datetime(data['InvoiceDate'])
@@ -376,8 +367,10 @@ def exercise():
 
     start = len(train)
     end = len(train) + len(test) - 1
-    m1_predictions = model_1_fit.predict(start=start, end=end, dynamic=False, typ='levels').rename('Model 1 Predictions')
-    m2_predictions = model_2_fit.predict(start=start, end=end, dynamic=False, typ='levels').rename('Model 2 Predictions')
+    m1_predictions = model_1_fit.predict(start=start, end=end, dynamic=False, typ='levels').rename(
+        'Model 1 Predictions')
+    m2_predictions = model_2_fit.predict(start=start, end=end, dynamic=False, typ='levels').rename(
+        'Model 2 Predictions')
     m3_predictions = model_3_fit.predict(start=start, end=end, dynamic=False, typ='levels').rename(
         'Model 3 Predictions')
     m4_predictions = model_4_fit.predict(start=start, end=end, dynamic=False, typ='levels').rename(
@@ -393,7 +386,7 @@ def exercise():
     plt.show()
 
 
-exercise()
+""" Find below some additional comments on the plots that are generated above """
 
 comments_on_plot = """
 Original Series

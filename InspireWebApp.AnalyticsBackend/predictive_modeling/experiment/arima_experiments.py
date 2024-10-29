@@ -1,141 +1,20 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+import statsmodels.api as sm
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import ParameterGrid
 from sklearn.model_selection import train_test_split
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
+from statsmodels.tsa.stattools import adfuller
+
+from predictive_modeling.constants import DATA_FILE_PATH
 
 
-def run():
-    # TODO: Revisit when doing predictive modeling
-
+def daily_sales_sarimax_forecast():
     # Load the CSV file
-    file_path: str = '../../Sales Data Online Shop.csv'
-    data: pd.DataFrame = pd.read_csv(file_path, low_memory=False)
-
-    # Data Preprocessing
-    data['InvoiceDate'] = pd.to_datetime(data['InvoiceDate'])
-    data['Date'] = data['InvoiceDate'].dt.date
-    data['Date'] = pd.to_datetime(data['Date'])
-
-    # latest_year = data['Date'].max().year
-    # data = data[data['Date'].dt.year == latest_year]
-
-    data.sort_values(by='Date', inplace=True)
-
-    # Feature Engineering
-    data['DayOfWeek'] = data['Date'].dt.dayofweek
-    data['Month'] = data['Date'].dt.month
-    data['Year'] = data['Date'].dt.year
-
-    # Aggregate data to daily sales
-    daily_sales = data.groupby('Date')['Quantity'].sum().reset_index()
-
-    # Train-test split
-    train, test = train_test_split(daily_sales, test_size=0.2, shuffle=False)
-
-    # Model Selection and Training - ARIMA
-    train_sales = train.set_index('Date')['Quantity']
-    test_sales = test.set_index('Date')['Quantity']
-
-    model = ARIMA(train_sales, order=(5, 1, 5))
-    model_fit = model.fit()
-
-    # Forecasting
-    forecast = model_fit.forecast(steps=len(test_sales))
-
-    # Evaluation
-    mse = mean_squared_error(test_sales, forecast)
-    mae = mean_absolute_error(test_sales, forecast)
-    print(f'MSE: {mse}, MAE: {mae}')
-
-    # Plotting the results
-    plt.figure(figsize=(10, 5))
-    plt.plot(train_sales, label='Train')
-    plt.plot(test_sales.index, test_sales, label='Test')
-    plt.plot(test_sales.index, forecast, label='Forecast')
-    plt.legend()
-    plt.show()
-
-def run2():
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    from sklearn.metrics import mean_squared_error, mean_absolute_error
-    from statsmodels.tsa.arima.model import ARIMA
-    from sklearn.model_selection import train_test_split
-
-    # Load the CSV file
-    file_path: str = '../../Sales Data Online Shop.csv'
-    data: pd.DataFrame = pd.read_csv(file_path, low_memory=False)
-
-    # Data Preprocessing
-    data['InvoiceDate'] = pd.to_datetime(data['InvoiceDate'])
-    data['Date'] = pd.to_datetime(data['InvoiceDate'].dt.date)
-
-    # Sort data by date
-    data.sort_values(by='Date', inplace=True)
-
-    # Feature Engineering
-    data['DayOfWeek'] = data['Date'].dt.dayofweek
-    data['Month'] = data['Date'].dt.month
-    data['Year'] = data['Date'].dt.year
-
-    # Aggregation and Forecasting Function
-    def forecast_level(level: str):
-        if level == 'daily':
-            resample_rule = 'D'
-        elif level == 'weekly':
-            resample_rule = 'W'
-        elif level == 'monthly':
-            resample_rule = 'M'
-        elif level == 'yearly':
-            resample_rule = 'Y'
-        else:
-            raise ValueError("Level must be one of 'daily', 'weekly', 'monthly', or 'yearly'")
-
-        # Aggregate data
-        aggregated_sales = data.groupby('Date')['Quantity'].sum().resample(resample_rule).sum().reset_index()
-
-        # Train-test split
-        train, test = train_test_split(aggregated_sales, test_size=0.2, shuffle=False)
-
-        # Model Selection and Training - ARIMA
-        train_sales = train.set_index('Date')['Quantity']
-        test_sales = test.set_index('Date')['Quantity']
-
-        model = ARIMA(train_sales, order=(5, 1, 5))
-        model_fit = model.fit()
-
-        # Forecasting
-        forecast = model_fit.forecast(steps=len(test_sales))
-
-        # Evaluation
-        mse = mean_squared_error(test_sales, forecast)
-        mae = mean_absolute_error(test_sales, forecast)
-        print(f'{level.capitalize()} - MSE: {mse}, MAE: {mae}')
-
-        # Plotting the results
-        plt.figure(figsize=(12, 6))
-        plt.plot(train_sales, label='Train')
-        plt.plot(test_sales.index, test_sales, label='Test')
-        plt.plot(test_sales.index, forecast, label='Forecast')
-        plt.title(f'{level.capitalize()} Forecast')
-        plt.legend()
-        plt.show()
-
-    # Run forecasting for each level
-    for level in ['daily', 'weekly', 'monthly', 'yearly']:
-        forecast_level(level)
-
-run2()
-
-def SARIMAX():
-    import pandas as pd
-    import statsmodels.api as sm
-
-
-    # Load the CSV file
-    file_path: str = '../../Sales Data Online Shop.csv'
+    file_path: str = DATA_FILE_PATH
     data: pd.DataFrame = pd.read_csv(file_path, low_memory=False)
 
     df = pd.DataFrame(data)
@@ -152,8 +31,6 @@ def SARIMAX():
                                       seasonal_order=(1, 1, 1, 7))  # Adjust the order as needed
     results = model.fit()
 
-    forecast = results.get_forecast(steps=len(test))
-
     # Forecast the next 10 days
     forecast = results.get_forecast(steps=10)
     forecast_index = pd.date_range(start=df.index[-1] + pd.Timedelta(days=1), periods=10, freq='D')
@@ -165,12 +42,9 @@ def SARIMAX():
     print(f'MSE: {mse}, MAE: {mae}')
 
 
-
-    print(forecast_series)
-
-def ExponentialSmoothing_TEST():
+def demand_and_sales_forecast_exponential_smoothing():
     # Load the CSV file
-    file_path: str = '../../Sales Data Online Shop.csv'
+    file_path: str = DATA_FILE_PATH
     data: pd.DataFrame = pd.read_csv(file_path, low_memory=False)
 
     df = pd.DataFrame(data)
@@ -221,12 +95,12 @@ def ExponentialSmoothing_TEST():
     plt.legend()
     plt.show()
 
-def SARIMAX_EXAMPLE():
+
+def daily_sales_forecast_sarimax_example():
     # Step 1: Collecting Data
-    import pandas as pd
 
     # Load the CSV file
-    file_path: str = '../../Sales Data Online Shop.csv'
+    file_path: str = DATA_FILE_PATH
     data: pd.DataFrame = pd.read_csv(file_path, low_memory=False)
 
     # Display the first few rows of the dataframe
@@ -251,7 +125,6 @@ def SARIMAX_EXAMPLE():
     print(daily_sales.head())
 
     # Step 3: Data Analysis
-    import matplotlib.pyplot as plt
 
     # Plot the daily sales
     plt.figure(figsize=(12, 6))
@@ -262,7 +135,6 @@ def SARIMAX_EXAMPLE():
     plt.show()
 
     # Check for stationarity using the Augmented Dickey-Fuller test
-    from statsmodels.tsa.stattools import adfuller
 
     result = adfuller(daily_sales['TotalSales'])
     print('ADF Statistic:', result[0])
@@ -284,7 +156,6 @@ def SARIMAX_EXAMPLE():
     train, test = daily_sales[:split_point], daily_sales[split_point:]
 
     # Step 6: Model Selection and Training
-    from statsmodels.tsa.arima.model import ARIMA
 
     # Define the ARIMA model for training data
     model = ARIMA(train['TotalSales'], order=(1, 1, 1), enforce_stationarity=False, enforce_invertibility=False)
@@ -296,7 +167,6 @@ def SARIMAX_EXAMPLE():
     print(results.summary())
 
     # Step 7: Model Evaluation
-    from sklearn.metrics import mean_squared_error, mean_absolute_error
 
     # Make predictions on the test set
     test['Forecast'] = results.predict(start=len(train), end=len(train) + len(test) - 1, dynamic=False)
@@ -323,7 +193,6 @@ def SARIMAX_EXAMPLE():
     print(f'RMSE: {rmse}')
 
     # Step 8: Model Parameters Tuning
-    from sklearn.model_selection import ParameterGrid
 
     # Define a more extensive parameter grid
     param_grid = {
@@ -349,14 +218,13 @@ def SARIMAX_EXAMPLE():
     print('Best Score:', best_score)
     print('Best Params:', best_params)
 
-def arima_vs_sarima():
+
+def compare_arima_and_sarima_sales_forecasting():
     # Step 1: Collecting Data
-    import pandas as pd
 
     # Load the CSV file
-    file_path: str = '../../Sales Data Online Shop.csv'
+    file_path: str = DATA_FILE_PATH
     data: pd.DataFrame = pd.read_csv(file_path, low_memory=False)
-
 
     # Display the first few rows of the dataframe
     print(data.head())
@@ -375,9 +243,6 @@ def arima_vs_sarima():
 
     # Display the pre-processed data
     print(daily_sales.head())
-
-    import matplotlib.pyplot as plt
-    from statsmodels.tsa.stattools import adfuller
 
     # Plot the daily sales
     plt.figure(figsize=(12, 6))
@@ -400,12 +265,6 @@ def arima_vs_sarima():
     # Split the data into training and testing sets
     train_size = int(len(daily_sales) * 0.8)
     train, test = daily_sales[:train_size], daily_sales[train_size:]
-
-    train.shape, test.shape
-
-    from statsmodels.tsa.arima.model import ARIMA
-    from sklearn.model_selection import ParameterGrid
-    from sklearn.metrics import mean_squared_error
 
     # Define a more extensive parameter grid for ARIMA
     param_grid_arima = {
@@ -430,5 +289,3 @@ def arima_vs_sarima():
 
     print('Best ARIMA Score:', best_score_arima)
     print('Best ARIMA Params:', best_params_arima)
-
-

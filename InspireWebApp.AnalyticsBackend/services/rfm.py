@@ -52,11 +52,12 @@ segments_descriptions_df = pd.DataFrame({
     ]
 })
 
-segments_descriptions = segments_descriptions_df .to_json(orient='records')
+segments_descriptions = segments_descriptions_df.to_json(orient='records')
 
 print(segments_descriptions)
 
 to_excel(segments_descriptions_df, 'Segments.xlsx')
+
 
 def find_most_impactful_customers(rfm_df):
     # Calculate Total Spending by quantile

@@ -19,7 +19,7 @@ export const dataDescriptor: CommonVizDataDescriptor = {
 };
 
 const options: PieChartOptions = {
-  title: 'Sales by Product Tag',
+  title: 'Visualization of Sales by Product Tag: Total Value per Tag',
 }
 
 export const configureFn = createConfigureChartFn(configurePieChart, options);

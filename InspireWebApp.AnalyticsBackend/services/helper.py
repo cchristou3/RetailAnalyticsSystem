@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -8,7 +7,6 @@ class Helper:
 
     def __init__(self):
         print('Helper Instantiated!')
-
 
     def print_column_stats(self, dataset, column):
         print(f"{column}: {dataset[column].dtype}")
@@ -109,4 +107,3 @@ class Helper:
         corr = dataset.corr()
 
         print(corr)
-

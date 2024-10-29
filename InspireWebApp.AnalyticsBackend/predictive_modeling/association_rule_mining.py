@@ -9,11 +9,6 @@ from services.utilities import to_excel
 from sql_client import SQLClient
 
 
-# TODO: Using this article https://dataaspirant.com/association-rule-analysis/#:~:text=Before%20performing%20association%20rule%20analysis%2C%20it%20is%20necessary,or%20irrelevant%20data%20Handling%20missing%20or%20incomplete%20data
-#  Implement FPM, and then specialize it to use the data of a specified group.
-#  E.g. Give me the ARs of the most frequent clients (use RFM model)
-
-
 def mine_rules():
     # Define the file path to the CSV file containing sales data
     file_path: str = './../Sales Data Online Shop.csv'
@@ -94,9 +89,6 @@ def mine_rules():
 
                         print(
                             f'Perform Frequent Mining on: {len(filtered_data)} records ({invoice_year}, {customer_category}, {package_type})')
-
-                        # Print the frequent items ets
-                        # print(frequent_item_sets)
 
                         # Generate association rules
                         rules = association_rules(frequent_item_sets, metric="lift", min_threshold=0.1)
@@ -213,6 +205,3 @@ def mine_rules_with_rfm_segments():
     print(all_rules_dict)
 
     client.insert_rules(all_rules_dict)
-
-
-mine_rules_with_rfm_segments()

@@ -5,7 +5,8 @@ from sqlalchemy.orm import sessionmaker
 
 class SQLClient:
     def __init__(self):
-        self.engine: Engine = create_engine("mssql+pyodbc://sa:Password1!@PAMBOS\\SQLEXPRESS/InspireDatabase?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes")
+        self.engine: Engine = create_engine(
+            "mssql+pyodbc://sa:Password1!@PAMBOS\\SQLEXPRESS/InspireDatabase?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes")
         self.connection: Connection = self.engine.connect()
         self.metadata: MetaData = MetaData()
         self.Session = sessionmaker(bind=self.engine)
@@ -76,6 +77,157 @@ class SQLClient:
             FROM Invoices I
             INNER JOIN InvoiceDetail ID			ON I.Id = ID.InvoiceId
             INNER JOIN Customers CU				ON CU.Id = I.CustomerId
+           """
+        return self.execute_select(query)
+
+    def get_top_revenue_generating_cities(self) -> pd.DataFrame:
+        query = """
+            ;WITH CTE_AGGREGATE_INVOICES_BY_CITY
+            AS
+            (
+                SELECT 
+                    CityName = CI.[Name],
+                    Value = SUM(ID.Quantity * ID.UnitPrice),
+                    Volume = SUM(ID.Quantity)
+                FROM Invoices I
+                INNER JOIN InvoiceDetail ID		ON I.Id = ID.InvoiceId
+                INNER JOIN Customers C			ON I.CustomerId = C.Id
+                INNER JOIN Cities CI			ON CI.Id = C.CityId
+                GROUP BY CI.[Name]
+            )
+            SELECT TOP 10
+                CTE.CityName,
+                CTE.Value,
+                CTE.Volume
+            FROM CTE_AGGREGATE_INVOICES_BY_CITY CTE
+            ORDER BY CTE.Value DESC
+           """
+        return self.execute_select(query)
+
+    def get_top_revenue_generating_products(self) -> pd.DataFrame:
+        query = """
+            ;WITH CTE_AGGREGATE_INVOICES_BY_PRODUCT
+            AS
+            (
+                SELECT 
+                    ProductName = P.[Name],
+                    Value = SUM(ID.Quantity * ID.UnitPrice),
+                    Volume = SUM(ID.Quantity)
+                FROM Invoices I
+                INNER JOIN InvoiceDetail ID		ON I.Id = ID.InvoiceId
+                INNER JOIN Products P			ON ID.ProductId = P.Id
+                GROUP BY P.[Name]
+            )
+            SELECT TOP 5
+                CTE.ProductName,
+                CTE.Value,
+                CTE.Volume
+            FROM CTE_AGGREGATE_INVOICES_BY_PRODUCT CTE
+            ORDER BY CTE.Value DESC
+           """
+        return self.execute_select(query)
+
+    def get_sales_by_customer_category(self) -> pd.DataFrame:
+        query = """
+            ;WITH CTE_AGGREGATE_INVOICES_BY_CUSTOMER_CATEGORY
+            AS
+            (
+                SELECT 
+                    CustomerCategoryName = CI.[Name],
+                    Value = SUM(ID.Quantity * ID.UnitPrice),
+                    Volume = SUM(ID.Quantity)
+                FROM Invoices I
+                INNER JOIN InvoiceDetail ID			ON I.Id = ID.InvoiceId
+                INNER JOIN Customers C				ON I.CustomerId = C.Id
+                INNER JOIN CustomerCategories CI	ON CI.Id = C.CustomerCategoryId
+                GROUP BY CI.[Name]
+            )
+            SELECT
+                CTE.CustomerCategoryName,
+                CTE.Value,
+                CTE.Volume
+            FROM CTE_AGGREGATE_INVOICES_BY_CUSTOMER_CATEGORY CTE
+            ORDER BY CTE.Value DESC
+           """
+        return self.execute_select(query)
+
+    def get_customer_distribution_by_customer_category(self) -> pd.DataFrame:
+        query = """
+             SELECT 
+                CustomerCategoryName = C.[Name], 
+                NumberOfCustomers = COUNT(1)
+            FROM CustomerCategories C
+            INNER JOIN Customers CU			ON C.Id = CU.CustomerCategoryId
+            GROUP BY C.Name
+            ORDER BY COUNT(1) DESC
+           """
+        return self.execute_select(query)
+
+    def get_customer_distribution_by_customer_segment(self) -> pd.DataFrame:
+        query = """
+             SELECT 
+                    SegmentName = Segment, 
+                    NumberOfCustomers = COUNT(1) 
+             FROM Customers
+             GROUP BY Segment
+             ORDER BY COUNT(1) DESC
+           """
+        return self.execute_select(query)
+
+    def get_sales_by_product_pack_type(self) -> pd.DataFrame:
+        query = """
+            ;WITH CTE_AGGREGATE_INVOICES_BY_PRODUCT_PACK_TYPE
+            AS
+            (
+                SELECT 
+                    ProductPackTypeName = PPT.[Name],
+                    Value = SUM(ID.Quantity * ID.UnitPrice),
+                    Volume = SUM(ID.Quantity)
+                FROM Invoices I
+                INNER JOIN InvoiceDetail ID			ON I.Id = ID.InvoiceId
+                INNER JOIN Products P				ON ID.ProductId = P.Id
+                INNER JOIN ProductPackageTypes PPT	ON PPT.Id = P.PackageTypeId
+                GROUP BY PPT.[Name]
+            )
+            SELECT 
+                CTE.ProductPackTypeName,
+                CTE.Value,
+                CTE.Volume
+            FROM CTE_AGGREGATE_INVOICES_BY_PRODUCT_PACK_TYPE CTE
+            ORDER BY CTE.Value DESC
+           """
+        return self.execute_select(query)
+
+    def get_sales_by_product_tag(self) -> pd.DataFrame:
+        query = """
+            ;WITH CTE_PRODUCT_TAGS
+            AS
+            (
+                SELECT 
+                    PT.ProductId, 
+                    Tags = T.Name
+                FROM ProductTags PT
+                INNER JOIN Tags T				ON T.Id = PT.TagId
+            ),
+            CTE_AGGREGATE_INVOICES
+            AS
+            (
+                SELECT 
+                    PT.Tags,
+                    Value = SUM(ID.Quantity * ID.UnitPrice),
+                    Volume = SUM(ID.Quantity)
+                FROM Invoices I
+                INNER JOIN InvoiceDetail ID		ON I.Id = ID.InvoiceId
+                INNER JOIN Products P			ON P.Id = ID.ProductId
+                LEFT JOIN CTE_PRODUCT_TAGS PT		ON P.Id = PT.ProductId
+                GROUP BY PT.Tags
+            )
+            SELECT
+                ProductTagName = ISNULL(CTE.Tags, 'Untagged'),
+                CTE.[Value],
+                CTE.Volume
+            FROM CTE_AGGREGATE_INVOICES CTE
+            ORDER BY ISNULL(CTE.Tags, 'Untagged')
            """
         return self.execute_select(query)
 

@@ -1,9 +1,10 @@
+import pandas as pd
 from matplotlib import pyplot as plt
+from sklearn.metrics import mean_squared_error
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
 
-def exponential_smoothing():
-    import pandas as pd
-
+def forecast_sales_with_exponential_smoothing():
     # Load the data into a DataFrame
     file_path: str = '../../Sales Data Online Shop.csv'
     data: pd.DataFrame = pd.read_csv(file_path, low_memory=False)
@@ -24,11 +25,6 @@ def exponential_smoothing():
     # Split the data into training and testing sets
     train_size = int(len(daily_sales) * 0.8)
     train, test = daily_sales[:train_size], daily_sales[train_size:]
-
-    train.shape, test.shape
-
-    from statsmodels.tsa.holtwinters import ExponentialSmoothing
-    from sklearn.metrics import mean_squared_error
 
     # Define a parameter grid for Exponential Smoothing
     param_grid_es = {
@@ -87,33 +83,3 @@ def exponential_smoothing():
     plt.ylabel('Total Sales')
     plt.legend()
     plt.show()
-
-
-import csv
-import json
-
-
-def csv_to_json(csv_file_path):
-    # List to hold dictionaries representing each row in the CSV
-    data = []
-
-    # Open and read the CSV file
-    with open(csv_file_path, mode='r', newline='', encoding='utf-8') as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        for row in csv_reader:
-            data.append(row)
-
-    # Convert list of dictionaries to a JSON string
-    json_string = json.dumps(data, indent=4)
-
-    return json_string
-
-
-# Path to your CSV file
-csv_file_path = "C:\\Users\\cchar\\Documents\\Uni\\CO4804 Master's Project\\User Experience Questionnaire.csv"
-
-# Get JSON string from CSV
-json_output = csv_to_json(csv_file_path)
-
-# Print JSON string
-print(json_output)

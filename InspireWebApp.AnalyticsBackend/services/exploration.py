@@ -13,7 +13,6 @@ from services.utilities import to_excel
 
 
 def explore(data: DataFrame):
-
     helper = Helper()
 
     # Display the first few rows of the dataset to get an idea of its structure
@@ -77,17 +76,9 @@ def explore(data: DataFrame):
 
     # Print out the counts of each tag
     print(tag_counts)
-
-    # Perform Similar Descriptive Analytics
-    # graph_helper.plot_boxplot(data, 'diagnosis', 'radius_mean')
-    # graph_helper.plot_boxplot(data, 'diagnosis', 'texture_mean')
-    # graph_helper.plot_boxplot(data, 'diagnosis', 'perimeter_mean')
-    # graph_helper.plot_boxplot(data, 'diagnosis', 'area_mean')
-    #
     helper.visualize_outliers(data, numeric_columns)
-    #
-    # helper.print_correlations(data[numeric_columns])
-    # helper.visualize_correlations(data[numeric_columns])
+    helper.print_correlations(data[numeric_columns])
+    helper.visualize_correlations(data[numeric_columns])
 
     graph_helper = GraphHelper()
     # graph_helper.plot_histograms(data, numeric_columns)

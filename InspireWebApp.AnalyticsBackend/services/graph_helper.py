@@ -6,7 +6,7 @@ class GraphHelper:
 
     def __init__(self):
         pass
-    
+
     def plot_histograms(self, dataset, columns):
         sns.set(style="whitegrid")
 

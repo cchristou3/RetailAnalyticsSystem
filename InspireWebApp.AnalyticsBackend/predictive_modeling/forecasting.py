@@ -4,6 +4,7 @@ import pandas as pd
 from pandas import Period
 from statsmodels.tsa.arima.model import ARIMA, ARIMAResults
 
+from predictive_modeling.constants import MODEL_PATH
 from sql_client import SQLClient
 
 DEFAULT_FORECAST_STEPS = 15
@@ -21,17 +22,17 @@ def create_forecasting_model():
     monthly_sales = data.groupby('YearMonth')['TotalSales'].sum().reset_index()
 
     model = ARIMA(monthly_sales['TotalSales'], order=(6, 1, 5))
-    model_fit = model.fit(method_kwargs={'maxiter':300})
+    model_fit = model.fit(method_kwargs={'maxiter': 300})
 
     print(model_fit.summary())
 
-    with open('predictive_modeling/arima_model_full.pkl', 'wb') as pkl_file:
+    with open(MODEL_PATH, 'wb') as pkl_file:
         pickle.dump(model_fit, pkl_file)
 
 
 def load_model() -> ARIMAResults:
     # Load the retrained ARIMA model
-    with open('predictive_modeling/arima_model_full.pkl', 'rb') as pkl_file:
+    with open(MODEL_PATH, 'rb') as pkl_file:
         return pickle.load(pkl_file)
 
 
