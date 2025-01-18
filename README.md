@@ -1,44 +1,108 @@
-# InspireWebApp
+<!-- PROJECT SHIELDS -->
+<!--
+*** I'm using markdown "reference style" links for readability.
+*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
+*** See the bottom of this document for the declaration of the reference variables
+*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
 
-# Development environment
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
-## Rider
+<!-- PROJECT LOGO -->
+<p align="center">
+  <h3 align="center">Retail Analytics System</h3>
 
-Load `InspireWebApp.sln`. Once it's loaded, make sure that the run/debug widget top/right (assuming default UI layout)
-is populated with 3 options:
+  <p align="center">
+    A system delivering actionable insights to transform retail data into meaningful visualizations.
+    <br />
+    <a href="https://github.com/cchristou3/RetailAnalyticsSystem/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/cchristou3/RetailAnalyticsSystem/issues">Request Feature</a>
+  </p>
+</p>
 
-* `InspireWebApp.SpaBackend: http`
-* `InspireWebApp.SpaBackend: https`
-* `InspireWebApp.ClientApp: start`
+## Table of Contents
 
-If any other options are present, remove them (using the Edit Configurations option). In case
-`InspireWebApp.ClientApp: start` is missing, you will need to add it manually:
+* [About the Project](#about-the-project)
+  * [Features](#features)
+  * [Built With](#built-with)
+* [Roadmap](#roadmap)
+* [Contributing](#contributing)
+* [License](#license)
+* [Contact](#contact)
 
-1) Edit Configuration
-2) Click on plus
-3) Select npm
-4) Fill in the fields:
-   * Package json: `InspireWebApp\InspireWebApp.ClientApp\package.json`
-   * Command: start
+---
 
-Once the run configurations are configured, you will need to setup the run/debug widget.
-First make sure the `http` profile is selected - it needs to be the "primary" one, as
-you will be stopping/restarting it often. Then click on the down arrow (leftmost of the
-widget) and click on `Launch another configuration`. Select the client app here.
+## About the Project
 
-### Running the project
+The Retail Analytics System tackles the challenge of transforming raw retail data into actionable insights. Retailers often face difficulty in utilizing sales, product, and customer behavior data effectively. This project provides a robust system with intuitive dashboards for data-driven decision-making while ensuring operational resilience and user satisfaction.
 
-Open the run/debug widget dropdown, click **run** for the client app. It will be running on its own in the
-background, automatically detecting any changes you make to the code. Restarting this process should be
-done very rarely, if ever. Likewise, do not select the _debug_ option - the functionality is not needed
-(this is the compiler/bundler process, not the actual app) and will cause slow downs and higher (than
-needed) memory usage.
+### Features
+- Unified dashboards visualizing sales, city, product, and behavioral analytics.
+- Resilient design with primary and secondary backend services to prevent disruptions.
+- High-performance handling of large datasets with minimal latency.
+- Adherence to GDPR standards for secure data handling.
+- Descriptive and predictive analytics inlcuding Market Basket Analysis, Sales Forecasting, and Customer Segmentation.
 
-Then run the primary (`http`) profile. Usually this is done via the debug option. As it's the primary
-option, you can also use keyboard shortcuts (e.g. shift+f9). You would need to restart this process
-whenever you make any changes that cannot be applied via edit-and-continue (e.g. changes to the DI
-container, controller structure/annotations, etc.). You would also need to stop this process
-whenever you use the migrations command line tooling.
+### Built With
+* [Angular](https://angular.dev/overview)
+* [.Net Core](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-9.0)
+* [Flask](https://flask.palletsprojects.com/en/stable/)
+* [SQL Server](https://learn.microsoft.com/en-us/sql/sql-server/?view=sql-server-ver16)
 
-Once both processes are running, open the URL that's printed in the **ClientApp's output**.
-It's setup to proxy the api requests to the backend process.
+## Roadmap
+
+See the [open issues](https://github.com/cchristou3/RetailAnalyticsSystem/issues) for a list of proposed features (and known issues).
+
+<!-- CONTRIBUTING -->
+## Contributing
+
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+
+
+<!-- LICENSE -->
+## License
+
+Distributed under the Apache License 2.0. See `LICENSE` for more information.
+
+
+
+<!-- CONTACT -->
+## Contact
+
+Charalambos Christou - c.charalambos1998@gmail.com
+
+Project Link: [https://github.com/cchristou3/RetailAnalyticsSystem](https://github.com/cchristou3/RetailAnalyticsSystem)
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/badge/contributors-2-blue
+[contributors-url]: https://github.com/cchristou3/RetailAnalyticsSystem/graphs/contributors
+
+[forks-shield]: https://img.shields.io/github/forks/cchristou3/RetailAnalyticsSystem
+[forks-url]: https://github.com/cchristou3/RetailAnalyticsSystem/network/members
+
+[stars-shield]: https://img.shields.io/github/stars/cchristou3/RetailAnalyticsSystem
+[stars-url]: https://github.com/cchristou3/RetailAnalyticsSystem/stargazers
+
+[issues-shield]: https://img.shields.io/github/issues/cchristou3/RetailAnalyticsSystem
+[issues-url]: https://github.com/cchristou3/RetailAnalyticsSystem/issues
+
+[license-shield]: https://img.shields.io/badge/license-Apache--2%3A0-green
+[license-url]: https://github.com/cchristou3/RetailAnalyticsSystem/blob/main/LICENSE
+
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/in/cchristou1998/
